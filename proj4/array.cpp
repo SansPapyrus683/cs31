@@ -160,23 +160,23 @@ int divide(string a[], int n, string divider) {
 }
 
 int main() {
-    string h[7] = { "nikki", "ron", "asa", "vivek", "", "chris", "donald" };
+    string h[] = { "nikki", "ron", "asa", "vivek", "", "chris", "donald" };
     assert(locate(h, 7, "chris") == 5);
     assert(locate(h, 7, "asa") == 2);
     assert(locate(h, 2, "asa") == -1);
     assert(locationOfMax(h, 7) == 3);
 
-    string g[4] = { "nikki", "ron", "chris", "tim" };
+    string g[] = { "nikki", "ron", "chris", "tim" };
     assert(locateDifference(h, 4, g, 4) == 2);
     assert(circleLeft(g, 4, 1) == 1 && g[1] == "chris" && g[3] == "ron");
 
-    string c[4] = { "ma", "can", "tu", "do" };
+    string c[] = { "ma", "can", "tu", "do" };
     assert(reduplicate(c, 4) == 4 && c[0] == "mama" && c[3] == "dodo");
 
-    string e[4] = { "asa", "vivek", "", "chris" };
+    string e[] = { "asa", "vivek", "", "chris" };
     assert(subsequence(h, 7, e, 4) == 2);
 
-    string d[5] = { "ron", "ron", "ron", "chris", "chris" };
+    string d[] = { "ron", "ron", "ron", "chris", "chris" };
     assert(enumerateRuns(d, 5) == 2);
 
     string f[] = { "vivek", "asa", "tim" };
