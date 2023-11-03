@@ -38,7 +38,7 @@ int locate(const string a[], int n, string target) {
 }
 
 int locationOfMax(const string a[], int n) {
-    if (n < 0) {
+    if (n <= 0) {
         return -1;
     }
     
