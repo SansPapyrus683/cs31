@@ -1,0 +1,24 @@
+I had a slight bit of trouble coding divide, but then I realized that this wasn't ICPC and O(N^2) would probably still pass.
+
+TEST CASES:
+reduplicate:
+
+locate:
+
+locationOfMax:
+
+circleLeft:
+
+enumerateRuns:
+
+flip:
+
+locateDifference:
+
+subsequence:
+
+locateAny:
+
+divide:
+
+For all of these functions, passing a negative number as an array size parameter should result in a return value of -1.
