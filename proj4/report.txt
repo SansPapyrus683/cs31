@@ -1,24 +1,68 @@
-I had a slight bit of trouble coding divide, but then I realized that this wasn't ICPC and O(N^2) would probably still pass.
+I had a slight bit of trouble coding the divide function, but then I realized that this wasn't ICPC and O(N^2) would probably still pass.
 
 TEST CASES:
+Double quotes (except those of the empty string) are omitted for brevity and my own sanity.
+
 reduplicate:
+({}, 0) => {}  // array size of 0
+({a, b}, 2) => {aa, bb}  // normal tc
+({"", abc, tf2}, 2) => {"", abcabc, tf2}  // n less than true array size
 
 locate:
+({b, c, d}, 3, c) => 1  // normal tc
+({a, b, c, d}, 4, c) => 2  // another normal tc
+({a, b, c, d}, 3, d) => -1  // element exists but not in bounds
+({a, b, d}, 3, c) => -1  // element does not exist
 
 locationOfMax:
+({}, 0) => -1  // empty array
+({a, d, c, b}, 4) => 1  // normal tc
+({a, c, d, d}, 4) => 2  // tiebreak by lower index
+({a, d, a, e}, 3) => 1  // true maximum not in bounds
 
 circleLeft:
+({a, b, c, d, e}, 5, 2) => {a, b, d, e, c}, 2  // normal tc
+({a, b, c, d, e}, 4, 2) => {a, b, d, c, e}, 2  // n less than true array size
+({a, b, c, d, e}, 5, 7) => array unchanged, -1  // position OOB
+({a, b, c, d, e}, 5, -10) => array unchaned, -1  // another position OOB
 
 enumerateRuns:
+({a}, 1) => 1  // semi-normal tc
+({}, 0) => 0  // empty array
+({a, a, b, b, c, c, c, d, a}, 9) => 5  // normal tc
+({a, a, a, a, a, b, b}, 5) => 1  // n less than true array size
 
 flip:
+({a, b, c, b, a}, 5) => unchanged  // normal tc
+({a, b, c, d, e}, 5) => {e, d, c, b, a}  // normal tc
+({a, b, c, d, e}, 4) => {d, c, b, a, e}  // n less than true array size
+({}, 0) => unchaned  // empty array
 
 locateDifference:
+({}, 0, {}, 0) => 1  // empty arrays
+({a, b, c, d, e}, 5, {a, b, c, f, g}, 5) => 5  // normal tc
+({a, b, c}, 3, {a, b, c}, 3) => -1  // no difference
+({a, b, c, d}, 4, {a, b, c, d, e}, 5) => 4  // first array runs out
+({a, b, c, d, e}, 5, {a, b, c, d}, 4) => 4  // second array runs out
 
 subsequence:
+({a, b, c}, 3, {}, 0) => 0  // empty second array
+({}, 0, {a, b}, 2) => -1  // empty first array
+({a, b, c, d, e}, 5, {c, d}, 2) => 2  // normal tc
+({a, b, c, d, e, f, g, h, i, j, k}, 11, {f, g, h}, 3) => 5  // another normal tc
+({a, b, c, d, e}, 4, {e}, 1) => -1  // n less than true array size
 
 locateAny:
+({}, 0, {a, b, c}, 3) => -1  // empty first array
+({a, b, c}, 3, {}, 0) => -1  // empty second array
+({a, b, c}, 3, {d, e, a}, 3) => 0  // normal tc
+({a, b, c}, 3, {d, b, a}, 3) => 0  // tiebreak by lower index
 
 divide:
+({}, 0, 3) => unchaned, -1  // empty array
+({a, b, c, d}, 4, c) => unchanged, 2  // normal tc
+({a, b, c, d}, 4, z) => unchanged, -1  // everything is less than the divider
+({z, y, x, d, a, b, c}, 7, e) => multiple valid arrays, 3  // normal tc
+({z, y, x, d, a, b, c}, 6, e) => multiple valid array but they all have to end in c, 3  // n less than true array size
 
 For all of these functions, passing a negative number as an array size parameter should result in a return value of -1.
