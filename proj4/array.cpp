@@ -160,7 +160,7 @@ int divide(string a[], int n, string divider) {
 }
 
 int main() {
-     string h[7] = { "nikki", "ron", "asa", "vivek", "", "chris", "donald" };
+    string h[7] = { "nikki", "ron", "asa", "vivek", "", "chris", "donald" };
     assert(locate(h, 7, "chris") == 5);
     assert(locate(h, 7, "asa") == 2);
     assert(locate(h, 2, "asa") == -1);
