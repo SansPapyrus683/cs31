@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0063)http://web.cs.ucla.edu/classes/fall23/cs31/Projects/2/spec.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+ <title>CS 31 Project 2, Fall 2023</title>
+</head>
+<body>
+<div align="right">
+Fall 2023 CS 31
+</div>
+<div align="center">
+<h2>Programming Assignment 2<br>
+One Fine Day</h2>
+<p>
+<strong>Time due: 11:00 PM Thursday, October 19</strong>
+</p>
+</div>
+<p style="font-size: smaller">
+Before you ask a question about this specification, see if it has already
+been addressed in the spec or in the <a href="http://web.cs.ucla.edu/classes/fall23/cs31/Projects/2/faq.html">Project 2 FAQ</a>.
+And read the FAQ before you turn in this project, to be sure you didn't
+misinterpret anything.
+</p>
+<p>
+(Be sure you also do the <a href="http://web.cs.ucla.edu/classes/fall23/cs31/Projects/2/hw.html">homework</a> accompanying this
+project.)
+</p>
+<p>
+A very, very well-known businessman has been judged to have fraudulently
+inflated the values of various properties he owns in order to secure better
+terms on loans.  The judge needs to determine an appropriate fine for the
+overstatement for each property.  The court has assigned a government intern
+(you) the job of writing a program to calculate the fine for a particular
+overstated valuation.
+</p><p>
+Your program must accept as input the identification of a property, the
+overstated amount in millions of dollars, and the location of the property.
+The output will tell how much the fine is for that property.
+</p><p>
+Here is an example of a dialog with the program (user input is shown here in
+<strong>boldface</strong>):
+</p>
+<pre>	Identification: <strong>National Doral Miami</strong>
+	Overstated amount (in millions): <strong>137</strong>
+	Location: <strong>florida</strong>
+	---
+	The fine for National Doral Miami is $20.526 million.
+</pre>
+<p>
+According to the schedule of fines for these kinds of fraud cases:
+</p>
+<ul>
+<li>
+For the first 60 million dollars overstated, the fine will be 11.11% of the
+overstated amount.
+</li><li>
+In addition, for the next 90 million dollars overstated (beyond the initial
+60 million dollars), the fine will be increased by an additional 15.3%
+of that additional overstated amount.  However, if the location is
+<code>florida</code> or <code>new york</code> (so spelled, entirely in
+lower case), the amount of this additional amount is 18% of that
+additional value instead of 15.3%.
+</li><li>
+In addition, the fine will be further increased in the amount of 21% of the
+portion of the overstated value that exceeds 150 million dollars.
+</li>
+</ul>
+<p>
+As an example, The fine for National Doral Miami above would be $6.666M for
+the first $60M in overstated value, plus $13.86M for the next $77M in
+overstated value (18% of 77M instead of 15.3%, since the location is
+florida), for a total of $20.526M.
+</p><p>
+Here's another example:
+</p>
+<pre>	Identification: <strong>MacLeod House &amp; Lodge</strong>
+	Overstated amount (in millions): <strong>155.4</strong>
+	Location: <strong>Scotland</strong>
+	---
+	The fine for MacLeod House &amp; Lodge is $21.570 million.
+</pre>
+<p>
+The fine is 11.11% of $60M, plus 15.3% of $90M, plus 21% of $5.4M.
+</p>
+<p>
+You can test your understanding of the fine schedule by experimenting with
+this <a href="http://web.cs.ucla.edu/classes/fall23/cs31/Projects/2/calc.html">financial fraud calculator</a> we found at the
+court's web site.
+</p>
+<p>
+Your program must collect the information for one property in the manner
+indicated by the examples, and then write to <code>cout</code> a line with
+three hyphens only (no spaces or other characters), followed by exactly
+one line in a format required below.  Our grading tool will judge the
+correctness of your program by examining only the line following the line
+with three hyphens (and verifying that there are no additional lines).
+That one line you write must be in one of the following four forms; the
+text must be <strong>identical</strong> to what is shown, except that
+<em>italicized</em> items are replaced as appropriate:
+</p>
+<ul>
+<li>
+If an empty string was provided for the identification:<br>
+<code>&nbsp;&nbsp;&nbsp;You must enter a property identification.</code>
+</li>
+<li>
+If the overstated amount is not positive:<br>
+<code>&nbsp;&nbsp;&nbsp;The overstated amount must be positive.</code>
+</li>
+<li>
+If an empty string was provided for the location:<br>
+<code>&nbsp;&nbsp;&nbsp;You must enter a location.</code>
+</li>
+<li>
+If the input is valid and none of the preceding situations holds:<br>
+<code>&nbsp;&nbsp;&nbsp;The fine for <em>identification</em> is $<em>amount</em> million.</code>
+</li>
+</ul>
+<p>
+In the last case, <em>identification</em> must be the identification the user
+entered, and <em>amount</em> must be the correct fine, shown as a number with
+at least one digit to the left and exactly three digits to the right of the
+decimal point, rounded to the nearest .001.  It is acceptable if a number
+like exactly 1.3575, equally near 1.357 and 1.358, rounds to either one of
+those.  The lines you write must not start with any spaces.  
+
+If you are not a good speller or typist, or if English is not your first
+language, be especially careful about duplicating the messages
+<strong>exactly</strong>.  Here are some foolish mistakes that may cause
+you to get very few points for correctness on this project, no matter how
+much time you put into it, because the mistake will cause your program to
+fail most or all of the test cases we run:
+</p>
+<ul>
+<li>Not writing to <code>cout</code> a line with exactly three hyphens in
+<em>all</em> cases.</li>
+<li>Writing any spaces on the line that is supposed to have three hyphens.</li>
+<li>Writing more than one line after the line with three hyphens.  Don't,
+for example, add a gratuitous "Honesty is the best policy".
+</li>
+<li>Writing lines to <code>cerr</code> instead of <code>cout</code>.</li>
+<li>Writing lines like these:
+<pre>	The fine for Park Residences Yorktown is $7.340 millon.        <em>misspelling</em>
+	The Fine for Park Residences Yorktown is $7.340 million.       <em>wrong capitalization</em>
+	The fine for Park Residences Yorktown will be $7.340 million.  <em>wrong text</em>
+	The fine for Park Residences Yorktown is $7.340.               <em>missing text</em>
+	 The fine for Park Residences Yorktown is $7.340 million.      <em>extra space at start of line</em>
+	The fine for Park Residences Yorktown is $ 7.340 million.      <em>extra space</em>
+	The fine for Park Residences Yorktown is 7.340 million.        <em>missing dollar sign</em>
+	The fine for Park Residences Yorktown is $7.340 million        <em>missing period</em>
+	The fine for Park Residences Yorktown is $7.34 million.        <em>missing digit</em>
+	The fine for Park Residences Yorktown is $7.3402 million.      <em>extra digit</em>
+	The fine for Park Residences Yorktown is $7 million.           <em>missing decimal point and digits</em>
+</pre>
+</li>
+</ul>
+<p>
+Your program must gather the identification, the overstated amount, and the
+location in that order.  However, if you detect an error in an item, you
+do not have to request or get the remaining items if you don't want to; just
+be sure you write to <code>cout</code> the line of three hyphens, the
+required message, and nothing more after that.  If instead you choose to
+gather all input first before checking for errors, and you detect more
+than one error, then after writing the line of three hyphens, write only
+the error message for the earliest erroneous item.
+</p>
+<p>
+You will not write any loops in this program.  This means that each time
+you run the program, it handles only one property.  It also means that in
+the case of bad input, you must not keep prompting the user until you get
+something acceptable; our grading tool will not recognize that you're
+doing that.
+</p><p>
+A string with no characters in it is the empty string.  A string with at
+least one character in it is not the empty string, even if the only
+characters in it are things like spaces or tabs.  Although realistically
+it would be silly to have an identiciation consisting of seventeen spaces and
+nothing more, treat that as you would any other non-empty string:  as a
+valid identification. (Since you don't yet know how to check for that kind of
+situation anyway, we're not requiring you to.)
+</p><p>
+The one kind of input error that your program does <strong>not</strong>
+have to deal with (because you don't yet know enough to know how to do this
+nicely), is not finding a number in the input where the overstated amount is
+expected.  We promise that our grading tool will not, for example, supply the
+text <code>zillions and zillions</code> when your program requests the overstated amount. 
+Notice that the overstated amount need not be an integer.
+</p><p>
+The correctness of your program must not depend on undefined program behavior.
+Your program could not, for example, assume anything about <code>n</code>'s
+value at the point indicated:
+</p>
+<pre>	int main()
+	{
+	    int n;
+	    int m = 42 * n;  // n's value is undefined
+	    …
+</pre>
+<p>
+Your program must build successfully under both g31 and either Visual C++
+or clang++.
+</p><p>
+What you will turn in for this assignment is a zip file containing these
+three files and nothing more:
+</p>
+<ol>
+<li>
+A text file named <strong>fine.cpp</strong> that contains the source code for
+your C++ program.  Your source code should have helpful comments that tell
+the purpose of the major program segments and explain any tricky code.
+</li><li>
+A file named <strong>report.docx</strong> (in Microsoft Word format) or
+<strong>report.txt</strong> (an ordinary text file) that contains:
+<ol style="list-style: lower-alpha">
+<li>
+A brief description of notable obstacles you overcame.  (In Project 1, for
+example, some people had the problem of figuring out how to work with more
+than one version of a program in Visual C++.)
+</li><li>
+A list of the test data that could be used to thoroughly test your program,
+along with the reason for each test.  You don't have to include the results
+of the tests, but you must note which test cases your program does not handle
+in the way this spec requires.  (This could happen if you didn't have time to
+write a complete solution, or if you ran out of time while still debugging a
+supposedly complete solution.)  For Project 1, for example, such a list, had
+it been required, might have started off like this:
+<dl>
+<dt></dt><dd>More surveyed than the total for basmati and jasmine (1000, 413, 382
+)</dd>
+<dt></dt><dd>Fewer surveyed than the total for basmati and jasmine (500, 413, 382
+)</dd>
+<dt></dt><dd>Zero total surveyed (0, 100, 100)</dd>
+<dt></dt><dd>Data giving a non-integer percentage (1000, 413, 382)</dd>
+<dt></dt><dd>More preferring basmati over jasmine (1000, 413, 382)</dd>
+<dt></dt><dd>Equal numbers preferring basmati and jasmine (1000, 500, 500)</dd>
+<dt></dt><dd>…</dd>
+</dl>
+</li>
+</ol>
+</li><li>
+<a name="hw"></a>
+A file named <strong>hw.docx</strong> (in Microsoft Word format) or
+<strong>hw.txt</strong> (an ordinary text file) that contains your solution
+to the <a href="http://web.cs.ucla.edu/classes/fall23/cs31/Projects/2/hw.html">homework</a> accompanying Project 2.
+</li>
+</ol>
+<p>
+By October 18, there will be links on the class webpage that will enable you
+<!--
+The <a href="../../Submit/submission.cgi?asst=2">turn in Project 2</a>
+link on the class webpage enables you
+-->
+to turn in your zip file electronically.  Turn in the file by the due time
+above.  Give yourself enough time to be sure you can turn something in,
+because we will not accept excuses like "My computer died the afternoon of
+the day the assignment was due."  There's a lot to be said for turning in
+a preliminary version of your program, report, and homework early (You can
+always overwrite it with a later submission).  That way you have something
+submitted in case there's a problem later.  Notice that most of the test
+data portion of your report can be written from the requirements in this
+specification, before you even start designing your program.
+</p><p>
+The writeup <a href="http://web.cs.ucla.edu/classes/fall23/cs31/strings.html">Some Things about Strings</a>
+tells you what you need to know about strings for this project.
+</p><p>
+As you develop your program, periodically try it out under another compiler
+(g31 on cs31.seas.ucla.edu if you're doing your primary development using
+Visual C++ or Xcode).  Sometimes one compiler will warn you about
+something that another is silent about, so you may be able to find and fix
+more errors sooner.  If running your program under both environments with
+the same input gives you different results, your program is probably
+relying on undefined behavior (such as using the value of an uninitialized
+variable), which we prohibit.
+</p>
+
+
+</body><style>
+@media print {
+  #simplifyJobsContainer {
+    display: none;
+  }
+}
+</style><div id="simplifyJobsContainer" style="position: absolute; top: 0px; left: 0px; width: 0px; height: 0px; overflow: visible; z-index: 2147483647;"><span><template shadowrootmode="open"><link rel="stylesheet" href="chrome-extension://pbanhockgagggenencehbnadejlgchfc/css/styles.css"><style>
+  :host {
+    all: initial;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    font-family: Palanquin, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(203, 213, 225, 1) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 6px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: rgba(203, 213, 225, 1);
+    border-radius: 3px;
+    border: 0;
+  }
+</style></template></span></div></html>
