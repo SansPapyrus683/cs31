@@ -1,0 +1,14 @@
+The main difficulty I had working on this project was understanding the specs.
+Besides that, there weren't any real troubles I had.
+
+TEST CASES:
+("place name", 200, "florida") is a quick sanity check to see if the program generally works and outputs the special rate for Florida.
+("bruh", 1, "moment") does the same thing.
+("another place name", 200, "FloridA") checks if only lowercase location names works.
+("never gonna", 200, "New York") checks the same thing as well as if the program reads multi-word inputs properly.
+("", 10, "give you up") checks if the correct error message for invalid property names is printed.
+("never gonna", 0, "let you down") checks if the correct error message for invalid overestimates is printed.
+("never gonna", -100.12, "run around") does the same thing but for negative overestimates
+("and desert you", 100, "") checks if the correct error message for invalid location names is printed.
+("", 50, "") checks that the program only outputs one error message when given multiple invalid inputs.
+("amogus", -1, "") does the same thing.

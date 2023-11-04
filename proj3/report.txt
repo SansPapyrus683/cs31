@@ -1,0 +1,43 @@
+The only difficulty I had during this project was finding an elegent way of implementing plotLine() without having too much duplicate code. I ended up needing to have two for loops that do basically the same thing, but other than that the project was fairly easy.
+
+The pseudocode for plotLine() is as follows:
+if dir or fgbg invalid:
+    return false
+if start is out of bounds or plotChar isn't printable:
+    return false
+
+calculate end point
+if end point is out of bounds:
+    return false
+
+for points between start and end pt:
+    set the character at the point to be plotChar
+
+performCommands() is a bit of a long one, but it works by keeping a pointer to the current character the program is at.
+While there's still more characters to be read, it reads in the next command and executes the operations specified.
+If the current command is a H or V command, it calls parseNum, a subroutine that reads in a number starting from the specified position.
+parseNum() returns the ending position of the number and the value of the number.
+If the value of the number is INT32_MIN, this means a syntax error has occured.
+Besides that, the rest of the function is fairly straightforward.
+
+TEST CASES:
+
+All commands are on a grid size of 10x10.
+
+For plotLine():
+(2, 3, 5, HORIZ, 'a', FG) - standard test with valid input
+(5, 5, 2, VERT, 'c', BG) - another standard test with valid input
+(1, 1, 20, VERT, 'b', BG) - should return false as it plots OOB
+(-1, -1, 6, HORIZ, 'c', FG) - should return false as the start is OOB
+(2, 3, 5, HORIZ, '中', BG) - should return false as the character is invalid
+(2, 3, 5, -1, 'a', FG) - should return false as dir parameter is invalid
+
+For performCommands():
+Only the command string is given as the rest are unnecessary.
+H2F#V2 - standard test with valid input
+H2H2H2F#CV2V2V2 - a longer standard test
+H? - syntax error @ position 1
+H8F#V20 - OOB error @ position 4
+H234 - syntax error @ position 3
+H6V4F中 - syntax error @ position 5
+Any of the above tests with an invalid plotChar or mode should return 2 as the spec defines.

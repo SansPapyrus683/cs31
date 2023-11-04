@@ -1,0 +1,7 @@
+the input you provided to the program built from original.cpp in step 5 above that produced incorrect, unusual, or nonsensical output. (Notice that we're asking about step 5, not step 4.)
+the error you introduced into logic_error.cpp
+the two errors you introduced into compile_error.cpp.
+
+1. If you provide 0 as the answer for the first prompt, regardless of what you put for the subsequent ones the program outputs that inf% of people prefer x rice over y rice.
+2. For a logic error, I switched the greater than sign to a less than sign. This causes nonsencial output like "More people prefer basmati rice over jasmine rice" when the percentage of people that prefer jasmine rice is 99%.
+3. I removed the using namespace std directive and removed the parenthesis around the if statement condition on line 26. This causes the compiler to report undefined references to cout, cin, ios, and endl as expected. It also reports a missing opening parenthesis before the if statement condition as well as a supposed else without a previous if.
