@@ -798,7 +798,7 @@ to <code>cout</code>, if you want to print things out for debugging purposes,
 write to <code>cerr</code> instead of <code>cout</code>.  <code>cerr</code>
 is the standard error destination; items written to it by default go to the
 screen.  When we test your program, we will cause everything written to
-<code>cerr</code> to be discarded instead — we will never see that
+<code>cerr</code> to be discarded instead ï¿½ we will never see that
 output, so you may leave those debugging output statements in your program if
 you wish.  (Note that the <code>draw</code> functions write to
 <code>cout</code>, not <code>cerr</code>.  If an expression passed to
@@ -823,13 +823,13 @@ value at the point indicated, or even whether or not the program crashes:
     {
         string s = "Hello";
         s.at(7) = '!';  // undefined behavior!
-        …
+        ï¿½
 </pre>
 <p>
 Running under g31 may not detect <em>all</em> occurrences of undefined
 behavior, but if your program tries to access a bad string position, it
 may well tell you what position of what string was the problem.  If you
-use <code>s.at(…)</code> instead of <code>s[…]</code>, it
+use <code>s.at(ï¿½)</code> instead of <code>s[ï¿½]</code>, it
 may even tell you on which line of code the problem occurred.
 </p>
 <h3>Note for Visual C++ users</h3>
@@ -905,35 +905,4 @@ way you have something submitted in case there's a problem later.
 </p>
 
 
-</body><style>
-@media print {
-  #simplifyJobsContainer {
-    display: none;
-  }
-}
-</style><div id="simplifyJobsContainer" style="position: absolute; top: 0px; left: 0px; width: 0px; height: 0px; overflow: visible; z-index: 2147483647;"><span><template shadowrootmode="open"><link rel="stylesheet" href="chrome-extension://pbanhockgagggenencehbnadejlgchfc/css/styles.css"><style>
-  :host {
-    all: initial;
-    line-height: 1.5;
-    -webkit-text-size-adjust: 100%;
-    -moz-tab-size: 4;
-    -o-tab-size: 4;
-    tab-size: 4;
-    font-family: Palanquin, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  }
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(203, 213, 225, 1) transparent;
-  }
-  *::-webkit-scrollbar {
-    width: 6px;
-  }
-  *::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  *::-webkit-scrollbar-thumb {
-    background-color: rgba(203, 213, 225, 1);
-    border-radius: 3px;
-    border: 0;
-  }
-</style></template></span></div></html>
+</body></template></span></div></html>
