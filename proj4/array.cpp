@@ -113,6 +113,10 @@ int subsequence(const string a1[], int n1, const string a2[], int n2) {
     if (n1 < 0 || n2 < 0 || n2 > n1) {
         return -1;
     }
+    // stupid edge case
+    if (n1 == 0 && n2 == 0) {
+        return 0;
+    }
     // try all possible starts
     for (int i = 0; i < n1 - n2; i++) {
         bool valid = true;
