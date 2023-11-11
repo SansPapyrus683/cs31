@@ -98,21 +98,11 @@ int render(int linLen, istream& inf, ostream& outf) {
 }
 
 int main() {
-    const int MAX_FILENAME_LENGTH = 100;
-    cout << "Enter input file name: ";
-    char filename[MAX_FILENAME_LENGTH];
-    cin.getline(filename, MAX_FILENAME_LENGTH);
-
-    ifstream infile(filename);
-    if (!infile) {
-        cerr << "Cannot open " << filename << "!" << endl;
-        return 1;
-    }
+    ifstream infile("test.txt");
 
     cout << "Enter maximum line length: ";
     int len;
     cin >> len;
-    cin.ignore(10000, '\n');
 
     ofstream outfile("output.txt");
     int returnCode = render(len, infile, outfile);
