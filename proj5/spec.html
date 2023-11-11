@@ -1,0 +1,436 @@
+<!--?xml version="1.0" encoding="ISO-8859-1" ?-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+ <title>CS 31 Project 5, Fall 2023</title>
+</head>
+<body>
+<div align="right">
+Fall 2023 CS 31
+</div>
+<div align="center">
+<h2>Programming Assignment 5<br>
+Text Renderer</h2>
+<p>
+<strong>Part 1 due: 11:00 PM Monday, November 13</strong><br>
+<strong>Part 2 due: 11:00 PM Monday, November 20</strong>
+</p>
+</div>
+<h3>Part 1</h3>
+<p style="margin-bottom:0">
+Go through the following sections of the class zyBook, doing the
+Participation Activities and Challenge Activities.  We will be looking at
+whether you have ever successfully completed them; it does not matter how
+many attempts you make before a successful completion (or how many
+attempts you make after a successful completion if you want to experiment).
+</p>
+<ul style="margin-top:0; margin-bottom:0">
+<li>6.6 through 6.9</li>
+<li>7.2 and 7.3 (Part 2 does not depend on these)</li>
+<li>8.1 and 8.2 (Part 2 does not depend on these)</li>
+</ul>
+<p>
+You should complete this part of the assignment well before the stated Part 1
+due date, to give you ample time for Part 2.  
+</p>
+<h3>Part 2</h3>
+<h4>Phase 1: Learn how to read text from a file</h4>
+<p>
+Read the <a href="http://web.cs.ucla.edu/classes/fall23/cs31/fileio.html">File I/O</a> writeup to learn how to work
+with files.  Create a plain text file with a name of your choosing and put a
+few lines of text in it.  Try running the last little program in the File I/O
+writeup (the program with the <code>countLines</code> function), replacing the
+file name <code>data.txt</code> with the name of your file.
+</p><p>
+In every past quarter that we've had projects that read from files, some
+students have trouble getting their program to successfully open a file. 
+This is usually because they did not specify a complete path name to the file
+and did not understand what the File I/O writeup said about where the program
+would look for the file.  Their problem was usually solved by their
+specifying the complete pathname to the file (such as
+<code>C:/CS31/P5/myfile.txt</code> on Windows or
+<code>/Users/<em>yourUsername</em>/Desktop/myfile.txt</code> on a Mac).
+</p><p>
+You will not be turning in anything for this phase of the project, but you
+should complete it as soon as possible to get past this potential stumbling
+block.
+</p>
+<h4>Phase 2: Write a text renderer function</h4>
+<p style="font-size: smaller">
+Before you ask questions regarding this specification, see if your question
+has already been addressed by the <a href="http://web.cs.ucla.edu/classes/fall23/cs31/Projects/5/faq.html">Project 5 FAQ</a>.  And
+read the FAQ before you <!--a href="../../Submit/submission.cgi?asst=5"-->turn in
+this project<!--/a-->, to be sure you didn't misinterpret anything.  Use the
+<a href="http://web.cs.ucla.edu/classes/fall23/cs31/Projects/5/tester.html">Project 5 Renderer</a> to test your understanding
+of the rendering rules.
+</p><p>
+When a browser renders text onto a screen or in a window of a certain width,
+or when a program like Microsoft Word formats text between margins of a
+certain width, it tries to fit as many words in each line as it can.  For
+this project, you will implement a function that renders text from a plain
+text file into neatly arranged paragraphs with a particular maximum allowed
+line length.  For example, if the desired maximum line length is 40
+characters and the input text is
+</p>
+<pre>It always does seem to me that I am doing more work than
+I should do. It is not that I object to the work, mind you;
+I like work: it fascinates me.       I can sit and look at it for hours.
+I love to keep     it by me: the idea of getting
+rid
+of it nearly breaks my heart. @P@ You cannot give me too
+much work; to accumulate work has almost become
+
+
+a passion with me: my study is so full of it now, that there is hardly
+an inch of room for any more.
+</pre>
+<p>
+then the output text will be
+</p>
+<pre>It always does seem to me that I am
+doing more work than I should do.  It is
+not that I object to the work, mind you;
+I like work:  it fascinates me.  I can
+sit and look at it for hours.  I love to
+keep it by me:  the idea of getting rid
+of it nearly breaks my heart.
+
+You cannot give me too much work; to
+accumulate work has almost become a
+passion with me:  my study is so full of
+it now, that there is hardly an inch of
+room for any more.
+</pre>
+<p style="font-size: smaller">
+<em>from Jerome K. Jerome's
+<a href="http://www.forgottenfutures.com/game/boat/boat.htm" target="_blank">Three Men in a Boat (To Say Nothing of the Dog)</a>.</em>
+</p><p>
+You are to implement the following function, whose job it is to do the
+rendering:
+</p>
+<pre>	int render(int lineLength, istream&amp; inf, ostream&amp; outf);
+</pre>
+<p>
+You may name the parameters something else, but there must be three parameters
+of the indicated types in the indicated order.  (The
+<a href="http://web.cs.ucla.edu/classes/fall23/cs31/fileio.html">File I/O</a> tutorial explains
+<code>istream</code> and <code>ostream</code>.)  The parameters are
+</p>
+<ul>
+<li>
+an int with the desired maximum line length
+</li>
+<li>
+an already-opened input source you will read from (probably a file the
+caller opened).
+</li>
+<li>
+an already-opened output destination you will write to (probably either
+<code>cout</code> or an output file the caller created)
+</li>
+</ul>
+<p>
+The function must return an int with one of the following values:
+</p>
+<ul>
+<li>0 if is successful (i.e., neither of the following problems occurs)</li>
+<li>1 if any input word portion (defined below) is longer than the maximum
+line length</li>
+<li>2 if the desired maximum line length is less than 1</li>
+</ul>
+<p>
+In the case of the error situation that would cause the function to return
+2, it must return 2 without writing any output.
+</p><p>
+Your <code>render</code> function may, of course, call other functions
+you write to help it do its job.  You can test your <code>render</code>
+function by calling it from a main routine of your choosing.  Our grading tool
+will ignore your main routine by renaming it to something harmless.  If you
+wish, your main routine could prompt the user for the file names and the line
+length.  Alternatively, it could hardcode the names of the files to use and
+prompt for only a line length.  Do whatever works best for you to help you
+test your function.  Here is an example:
+</p>
+<pre>    int main()
+    {
+        const int MAX_FILENAME_LENGTH = 100;
+        for (;;)
+        {
+            cout &lt;&lt; "Enter input file name (or q to quit): ";
+            char filename[MAX_FILENAME_LENGTH];
+            cin.getline(filename, MAX_FILENAME_LENGTH);
+            if (strcmp(filename, "q") == 0)
+                break;
+            ifstream infile(filename);
+            if (!infile)
+            {
+                cerr &lt;&lt; "Cannot open " &lt;&lt; filename &lt;&lt; "!" &lt;&lt; endl;
+                continue;
+            }
+            cout &lt;&lt; "Enter maximum line length: ";
+            int len;
+            cin &gt;&gt; len;
+            cin.ignore(10000, '\n');
+            int returnCode = render(len, infile, cout);
+            cout &lt;&lt; "Return code is " &lt;&lt; returnCode &lt;&lt; endl;
+        }
+    }
+</pre>
+<p>
+We use the following definitions in the rendering rules:
+</p>
+<ul>
+<li>
+A <em>word</em> is a sequence of non-whitespace characters not immediately
+preceded or followed by a non-whitespace character.  (The &lt;cctype&gt;
+function <code>isspace</code> tells you if a character is a whitespace
+character.)  The string <code>"swan's nest"</code> contains two words,
+<code>swan's</code> and <code>nest</code>.  Because of immediately preceding
+or following non-whitespace, <code>swan</code>, <code>wa</code>,
+<code>'s</code>, and <code>nes</code> are not words of that string.
+</li>
+<li>
+A word can be viewed as a sequence of one or more <em>word portions</em>.
+The first word portion in a word starts at the start of the word; subsequent
+word portions in a word start just after the last character of the previous
+word portion.  The last character of a word portion is the first hyphen at or
+after the start of that word portion, or the end of the word if there is no
+hyphen after the start of that word portion.  Here are examples, including
+some pathological ones:
+<pre>	<em>Word</em>                <em>Word portions</em>
+	Thames              Thames
+	so-called           so- <em>and</em> called
+	Henley-on-Thames    Henley-<em>,</em> on-<em>,</em> <em>and</em> Thames
+	so--called          so-<em>,</em> -<em>,</em> <em>and</em> called
+	so-                 so-
+	-so                 -<em>,</em> <em> and </em> so
+</pre>
+</li>
+</ul>
+<p>
+Here are the rendering rules:
+</p>
+<ol>
+<li>
+<p>
+Fit as many word portions in an output line as you can without exceeding
+the line length.  Output lines may well end up being different lengths,
+giving a "ragged-right" effect; your renderer will not try to right-justify
+the text.
+</p>
+</li>
+<li>
+<p>
+Words in an output line must normally be separated by one blank.  However,
+if the last character of an output word is a period, question mark,
+exclamation point, or colon, it must be separated from any following word on
+that output line by two blanks.  The last word on an output line must not be
+followed by any blanks.  The first word portion on an output line must not be
+preceded by any blanks.  Blanks must not appear on an output line within any
+word.  The last line of output must end with a newline, and there must be no
+output lines (not even empty ones) after the last word of the last
+paragraph.  For example, if the last word in the input is
+<code>bye</code>, then the last four characters your function would write
+are <code>'b'&nbsp;&nbsp;'y'&nbsp;&nbsp;'e'&nbsp;&nbsp;'\n'</code>.  That
+does <em>not</em> produce an empty last line.  Writing this <em>would</em>
+produce an empty last line, in violation of this rule:
+<code>'b'&nbsp;&nbsp;'y'&nbsp;&nbsp;'e'&nbsp;&nbsp;'\n'&nbsp;&nbsp;'\n'</code>.
+</p><p>
+Notice that this rule implies that if a word containing a hyphen is broken at
+a hyphen to fit on an output line, the hyphen must be the last character of
+one output line, and the character after the hyphen must be the first
+character of the next output line.
+</p>
+</li>
+<li>
+<p>
+If a word portion is longer than the line length, as much as will fit must be
+on an output line by itself.  The rest of that word portion must begin the
+next output line (and, of course, is subject to similar splitting if it's too
+long).  If this situation ever occurs, your function continues rendering, but
+it must eventually return 1 instead of 0 to its caller.  Notice that this is
+the only situation where a word is allowed to be split across lines other than
+at a hyphen.
+</p>
+</li>
+<li>
+<p>
+The input word <code>@P@</code> is not to be processed as a word according
+to the above rules; instead, it indicates a paragraph break.  The first
+word in the input following a paragraph break will be the first word of a
+new paragraph in the output.  If a paragraph has already been output, the
+new paragraph must be separated from the one that precedes it by an empty
+line (i.e., a line with no characters other than the terminating newline).
+The very first output paragraph must not be preceded by an empty line.
+The very last output paragraph must not be followed by an empty line.
+Two or more consecutive <code>@P@</code> words in the input are treated as
+just one paragraph break.  Notice that <code>banjo@P@</code> is one
+eight-character word; it does not cause a paragraph break, because in that
+string, <code>@P@</code> is not a word because of the immediately preceding
+non-whitespace character <code>o</code>.
+</p>
+</li>
+</ol>
+<p>
+Notice that these rules imply that if the line length is valid but the
+input contains no words, <code>render</code> must return 0 without writing
+any output whatsoever.
+</p><p>
+Your <code>render</code> function and any functions you write that it
+calls directly or indirectly <strong>must not</strong> use any std::string
+objects.  If you need to use a string, use a C string.  Your function may
+assume that no input line will be 180 or more characters long (i.e., we
+will not test it with input lines that long).
+</p><p>
+This project is doable without assuming any upper limit for the output
+line length (the first parameter of <code>render</code>) � rather
+than storing the parts of an output line in a C string to be written
+later, you instead write them as soon as you can.  However, some people
+may not figure out how to do that, so we'll give you a choice.  If the first
+parameter of <code>render</code> is greater than 250, your implementation
+of <code>render</code> must either:
+</p>
+<ul>
+<li>
+return 2 without writing any output; or
+</li><li>
+render the text using the indicated line length, returning 0 or 1 as
+appropriate (i.e., your algorithm doesn't impose any upper limit on the output
+line length).  Implementing this choice correctly (instead of returning 2 and
+producing no output) is worth 5 bonus points.
+</li>
+</ul>
+<p>
+(Although the program you turn in must not use any C++ strings, only C strings,
+you might want to consider this development strategy:  Ignore this restriction
+at first, and develop a working solution that uses C++ strings.  After you've
+ironed out the issues in writing the renderer, save a backup, and then
+convert your using C++ strings to using C strings instead.  This approach
+helps you avoid confusing the mistakes in your use of C strings with the
+mistakes in your rendering algorithm, so might make debugging easier.)
+</p><p>
+Your <code>render</code> function and any functions you write that it
+calls directly or indirectly must not read from any source other than the
+<code>istream</code> passed as the second parameter and must not write to
+any destination other than the <code>ostream</code> passed as the third
+parameter, except that you may write anything you want to <code>cerr</code>.
+Our grading tool will discard anything written to <code>cerr</code>, so feel
+free to use it for debugging purposes.
+</p><p>
+Your program must not use any global variables whose values may be changed
+during execution.  Global <em>constants</em> are OK.
+</p><p>
+The program you turn in must build successfully under both g31 and either
+Visual C++ or clang++, and its correctness must not depend on undefined
+program behavior.  Your program could not, for example, assume anything
+about s's value in the following, or even whether or not the program crashes: 
+</p>
+<pre>	void f()
+	{
+	    char s[6];
+	    strcpy(s, "Thames");  // s is too short for 6+1 chars
+	    �
+</pre>
+<h3>What to turn in</h3>
+<p>
+You won't turn anything in through the CS 31 web site for Part 1; the zyBook
+system notes your successful completion of the PAs and CAs. For Part 2, turn
+in a zip file containing these two files and nothing more: 
+</p>
+<ol>
+<li>
+<p>
+A text file named <strong>render.cpp</strong> that contains the source
+code for your C++ program.  Your source code should have helpful comments
+that tell the purpose of the major segments of your function and explain any
+non-obvious code.
+</p><p>
+Try to ensure that your program does something that meets the spec for at
+least a few test cases.  That way, you can get some partial credit for a
+program that does not meet the entire specification.
+</p>
+</li>
+<li>A file named <strong>report.docx</strong> (in Microsoft Word format), or
+<strong>report.txt</strong> (an ordinary text file) that contains:
+<ol style="list-style: lower-alpha">
+<li>
+A brief description of notable obstacles you overcame.
+</li>
+<li>
+A description of the design of your project.  Use
+<a href="http://web.cs.ucla.edu/classes/fall23/cs31/pseudocode.html">pseudocode</a> where it clarifies
+the presentation.  Someone reading your description should be able to
+determine what the responsibilities of the functions you wrote are.  If
+someone had to modify your code later, could they from your description
+readily find in your program the approximate location of the code that, for
+example, handles a word portion not fitting on a line?
+</li>
+<li>
+A list of the test data that could be used to thoroughly test
+your function, along with the reason for each test case (e.g. "word broken at
+hyphen" or "two spaces after period").  You must note which test cases
+your program does not handle correctly. (This could happen if you didn't
+have time to write a complete solution, or if you ran out of time while
+still debugging a supposedly complete solution.)
+</li>
+</ol>
+</li>
+</ol>
+<p>
+By November 19, there will be links on the class webpage that will enable you
+to turn in your zip file electronically.  Turn in the file by the due time
+above.
+</p>
+<h3>Notes for Visual C++ users</h3>
+<p>
+Microsoft made a controversial decision to issue by default an error or
+warning when your code uses certain functions from the standard C and C++
+libraries (e.g., <code>strcpy</code>).  These warnings call those
+functions unsafe and recommend using different functions in their place;
+those other functions, though, are not Standard C++ functions, so will
+cause a compilation failure when you try to build your program under
+clang++ g++.  Therefore, for this class, we want to use functions like
+<code>strcpy</code> without getting those warnings from Visual C++; to
+eliminate them, put the following line in your program <em>before</em> any
+of your <code>#include</code>s:
+</p>
+<pre>	#define _CRT_SECURE_NO_DEPRECATE
+</pre>
+<p>
+It is OK and harmless to leave that line in when you build your program
+using g31 or clang++ and when you turn it in.
+</p><p>
+If you declare a large array in a function, Visual C++ gives a harmless
+warning <code>C6262: Function uses '<em>NNNNN</em>' bytes of stack:
+exceeds /analyze:stacksize '16384'. Consider moving some data to the
+heap.</code>, where <em>NNNNN</em> is some number.  You can eliminate that
+warning by putting the following line in your program above the
+<code>#define _CRT_SECURE_NO_DEPRECATE</code>:
+</p>
+<pre>        #pragma warning(disable:6262)
+</pre>
+<p>
+It is OK and harmless to leave that line in when you build your program
+using g31 or clang++ and when you turn it in, even if you get a warning
+about the pragma being ignored.
+</p><p>
+Alternatively, in Visual Studio, select Project / <em>yourProjectName</em>
+properties, then select Configuration Properties / Code Analysis / General,
+and then in Code Analysis's stacksize, modify 16384 to, say, 100000.
+</p><p>
+If your program dies under Visual C++ with a dialog box appearing saying
+"Debug Assertion Failed! ... File: ...\src\isctype.c ...  expression:
+(unsigned)(c+1)&lt;=256", then you called one of the functions defined by
+<code>&lt;cctype&gt;</code>, such as <code>isspace</code>, with a character
+whose encoding is outside the range of 0 through 127.  Since all the
+normal characters you would use (space, letters, punctuation,
+<code>'\0'</code>, etc.) fall in that range, you're probably passing an
+uninitialized character to the function.  Perhaps you're examining a
+character past the <code>'\0'</code> marking the end of a C string, or
+perhaps you built what you thought was a C string but forgot to end it
+with a <code>'\0'</code>.
+</p>
+
+
+</body>
+</html>
