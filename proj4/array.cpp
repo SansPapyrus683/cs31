@@ -11,13 +11,17 @@ void swap(string a[], int x, int y) {
     a[y] = tmp;
 }
 
-/** Prints out an array for debugging purposes. */
-void print(string a[], int n) {
+/** Prints out an array for debugging purposes */
+template <typename T>
+void print(T arr[], int sz) {
     cout << '[';
-    for (int i = 0; i < n - 1; i++) {
-        cout << a[i] << ", ";
+    for (int i = 0; i < sz - 1; i++) {
+        cout << arr[i] << ", ";
     }
-    cout << a[n - 1] << ']' << endl;
+    if (sz > 0) {
+        cout << arr[sz - 1];
+    }
+    cout << ']' << endl;
 }
 
 int reduplicate(string a[], int n) {
@@ -118,7 +122,7 @@ int subsequence(const string a1[], int n1, const string a2[], int n2) {
         return 0;
     }
     // try all possible starts
-    for (int i = 0; i < n1 - n2; i++) {
+    for (int i = 0; i <= n1 - n2; i++) {
         bool valid = true;
         // check if this start is valid for all subsequences
         for (int j = i; j < i + n2; j++) {
@@ -150,19 +154,14 @@ int divide(string a[], int n, string divider) {
     if (n < 0) {
         return false;
     }
-    bool divided = false;
-    /*
-     * basically bubble sort- while it still seems there's elements out of order,
-     * iterate through the array and swap any inversions
-     */
-    while (!divided) {
-        divided = true;
+    bool sorted = false;
+    // bubble sort lmao
+    while (!sorted) {
+        sorted = true;
         for (int i = 0; i < n - 1; i++) {
-            bool firstLt = a[i] < divider;
-            bool secondLt = a[i + 1] < divider;
-            if (!firstLt && secondLt) {
+            if (a[i] > a[i + 1]) {
                 swap(a[i], a[i + 1]);
-                divided = false;
+                sorted = false;
             }
         }
     }
@@ -173,36 +172,4 @@ int divide(string a[], int n, string divider) {
         }
     }
     return n;
-}
-
-int main() {
-    string h[] = { "nikki", "ron", "asa", "vivek", "", "chris", "donald" };
-    assert(locate(h, 7, "chris") == 5);
-    assert(locate(h, 7, "asa") == 2);
-    assert(locate(h, 2, "asa") == -1);
-    assert(locationOfMax(h, 7) == 3);
-
-    string g[] = { "nikki", "ron", "chris", "tim" };
-    assert(locateDifference(h, 4, g, 4) == 2);
-    assert(circleLeft(g, 4, 1) == 1 && g[1] == "chris" && g[3] == "ron");
-
-    string c[] = { "ma", "can", "tu", "do" };
-    assert(reduplicate(c, 4) == 4 && c[0] == "mama" && c[3] == "dodo");
-
-    string e[] = { "asa", "vivek", "", "chris" };
-    assert(subsequence(h, 7, e, 4) == 2);
-
-    string d[] = { "ron", "ron", "ron", "chris", "chris" };
-    assert(enumerateRuns(d, 5) == 2);
-
-    string f[] = { "vivek", "asa", "tim" };
-    assert(locateAny(h, 7, f, 3) == 2);
-    assert(flip(f, 3) == 3 && f[0] == "tim" && f[2] == "vivek");
-
-    assert(divide(h, 7, "donald") == 3);
-
-    string i[] = { "ron", "vivek", "asa", "tim" };
-    assert(divide(i, 4, "tim") == 2);
-
-    cout << "All tests succeeded" << endl;
 }
