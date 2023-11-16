@@ -11,10 +11,21 @@ bool isPunctuation(char c) {
     return strchr(".?!:", c) != NULL;
 }
 
+/** @return whether a string consists of entirely whitespace */
+bool isSpace(char str[]) {
+    int len = strlen(str);
+    for (int i = 0; i < len; i++) {
+        if (!isspace(str[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
 /** @return the number of spaces needed after a word */
 int spacesAfter(char str[]) {
     int len = strlen(str);
-    return len == 0 ? 0 : (isPunctuation(str[len - 1]) ? 2 : 1);
+    return len == 0 || isSpace(str) ? 0 : (isPunctuation(str[len - 1]) ? 2 : 1);
 }
 
 int min(int a, int b) {
@@ -26,23 +37,21 @@ int render(int linLen, istream& inf, ostream& outf) {
         return 2;
     }
 
-    char lastPrinted[MAX_WORD_LEN + 1];  // +1 for null terminator
-    lastPrinted[0] = '\0';
+    // last outputted thing (\n = paragraph break), +1 for null terminator
+    char lastPrinted[MAX_WORD_LEN + 1];
+    lastPrinted[0] = '\0';  // starts out completely empty
     int currLen = 0;
 
     int retCode = 0;
-    bool lastWasPara = true;  // was the last thing we outputted a paragraph?
-    bool anything = false;  // did we even read in any words
     char word[MAX_WORD_LEN + 1];
     while (inf >> word) {
         // first check if we should handle this as a paragraph
         if (strcmp(word, "@P@") == 0) {
-            if (!lastWasPara) {
+            if (strcmp(lastPrinted, "\n") != 0) {
                 // reset & print only if the last token wasn't a paragraph
-                outf << "\n\n";
-                lastPrinted[0] = '\0';
+                outf << '\n';
                 currLen = 0;
-                lastWasPara = true;
+                strcpy(lastPrinted, "\n");
             }
             continue;
         }
@@ -58,6 +67,11 @@ int render(int linLen, istream& inf, ostream& outf) {
                 strncpy(slice, word + prev, pLen);
                 slice[pLen] = '\0';  // c sucks
                 
+                // print another newline to complete the paragraph break
+                if (strcmp(lastPrinted, "\n") == 0) {
+                    outf << '\n';
+                }
+
                 int spaces = spacesAfter(lastPrinted);
                 // the current word along with the previous spaces have to fit
                 if (currLen + spaces + pLen > linLen) {
@@ -71,7 +85,8 @@ int render(int linLen, istream& inf, ostream& outf) {
                     if (pLen > linLen) {
                         retCode = 1;
                     }
-                    currLen = len % linLen;
+                    // get the new currLen w/ an edge case
+                    currLen = len % linLen == 0 ? linLen : len % linLen;
                 } else {
                     // if it fits, we can just output the spaces & the word
                     for (int i = 0; i < spaces; i++) {
@@ -86,11 +101,9 @@ int render(int linLen, istream& inf, ostream& outf) {
                 prev = i + 1;  // and the start of the next word
             }
         }
-
-        anything = true;
-        lastWasPara = false;
     }
-    if (anything) {
+    // if we last printed some non-break stuff, end w/ a newline
+    if (strlen(lastPrinted) > 0 && strcmp(lastPrinted, "\n") != 0) {
         outf << '\n';
     }
 
@@ -98,7 +111,7 @@ int render(int linLen, istream& inf, ostream& outf) {
 }
 
 int main() {
-    ifstream infile("test.txt");
+    ifstream infile("input.txt");
 
     cout << "Enter maximum line length: ";
     int len;

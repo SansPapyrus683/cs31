@@ -4,28 +4,33 @@ Here's the pseudocode:
 
 check if linLen is valid: if not, return 2
 
-lastWasPara = true
 retCode = 0
+lastPrinted = ""
 for all read in words:
     if word is paragraph break
-        if last output was not paragraph:
-            output two newlines
-            reset lastPrinted and currLen
+        if lastPrinted wasn't a newline:
+            print a newline
+            lastPrinted = "\n"
+            currLen = 0
         
         continue
 
     for all word portions in word:
+        if lastPrinted was a newline:
+            print a newline
+
         calculate the number of spaces needed for lastPrinted
         if the spaces and word don't fit:
-            output linLen length chunks of the string until the end
+            print linLen length chunks of the string until the end
             if the current word portion's length > line length:
                 retCode = 1
+            set currLen to be the tail portion
         else:
             print them and go on
 
         update lastPrinted and currLen
 
-if we outputted anything:
+if we last printed a character that wasn't a paragraph break
     print a newline to conclude
 
 return retCode
