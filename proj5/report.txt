@@ -8,7 +8,7 @@ retCode = 0
 lastPrinted = ""
 for all read in words:
     if word is paragraph break
-        if lastPrinted wasn't a newline:
+        if lastPrinted was a word portion:
             print a newline
             lastPrinted = "\n"
             currLen = 0
@@ -24,7 +24,7 @@ for all read in words:
             print linLen length chunks of the string until the end
             if the current word portion's length > line length:
                 retCode = 1
-            set currLen to be the tail portion
+            set currLen to be the length of the tail portion
         else:
             print them and go on
 
@@ -36,3 +36,84 @@ if we last printed a character that wasn't a paragraph break
 return retCode
 
 TEST CASES:
+
+Standard test case, just a bit long.
+Just testing if the general word wrap and spacing works without any funny hyphens.
+
+INPUT:
+I like to creep around my home and act like a goblin @P@
+I don’t know why but I just enjoy doing this. Maybe it’s my way of dealing with stress or something but I just do it about once every week. Generally I’ll carry around a sack and creep around in a sort of crouch-walking position making goblin noises, then I’ll walk around my house and pick up various different “trinkets” and put them in my bag while saying stuff like “I’ll be having that” and laughing maniacally in my goblin voice (“trinkets” can include anything from shit I find on the ground to cutlery or other utensils). The other day I was talking with my neighbours and they mentioned hearing weird noises like what I wrote about and I was just internally screaming the entire conversation. I’m 99% sure they don’t know it’s me but god that 1% chance is seriously weighing on my mind.
+
+linLen = 60
+
+OUTPUT:
+I like to creep around my home and act like a goblin
+
+I don’t know why but I just enjoy doing this.  Maybe
+it’s my way of dealing with stress or something but I just
+do it about once every week.  Generally I’ll carry around
+a sack and creep around in a sort of crouch- walking
+position making goblin noises, then I’ll walk around my
+house and pick up various different “trinkets” and put
+them in my bag while saying stuff like “I’ll be having
+that” and laughing maniacally in my goblin voice
+(“trinkets” can include anything from shit I find on the
+ground to cutlery or other utensils).  The other day I was
+talking with my neighbours and they mentioned hearing weird
+noises like what I wrote about and I was just internally
+screaming the entire conversation.  I’m 99% sure they
+don’t know it’s me but god that 1% chance is seriously
+weighing on my mind.
+
+A hyphen check.
+Hyphens are in the beginning, middle, and end of words.
+
+INPUT:
+Why is six afraid of seven? @P@
+Six hasn't been the same since he left Vietnam. He can seldom close his eyes without open-ing them a-gain at fear of Charlies lurking in the jungle -rees. Not that you could ever see the bastards, mi-nd you. They were swift, and they knew their way around the jungle like nothing else. He remembers the looks on the boys' faces as he wal-ked into that village and... oh, Je-sus. The memories seldom left him, either. Some-times he'd reminisce- - even hear - T-ex's southern drawl.
+
+linLen = 50
+
+OUTPUT:
+Why is six afraid of seven?
+
+Six hasn't been the same since he left Vietnam.
+He can seldom close his eyes without open-ing them
+a-gain at fear of Charlies lurking in the jungle -
+rees.  Not that you could ever see the bastards,
+mi-nd you.  They were swift, and they knew their
+way around the jungle like nothing else.  He
+remembers the looks on the boys' faces as he wal-
+ked into that village and...  oh, Je-sus.  The
+memories seldom left him, either.  Some-times he'd
+reminisce- - even hear - T-ex's southern drawl.
+
+This test case checks if the program processes
+paragraph breaks and parses the words correctly.
+Consecutive paragraph breaks and those at the beginning/end should do nothing.
+It also checks if the program still works with a large linLen limit.
+
+INPUT:
+@P@
+@P@ Is that all you crapposting fricks can say?!?
+@P@ @P@
+Duurrhhlll... Based, based, cringe, cringe, based, based, cringe, cringe,
+cringe, based, cringe...     	I feel like I'm
+		in a frickING asylum full of dementia-ridden 	old
+people that can do nothing but repeat the same
+
+
+FRICKING words on loop like a fricking broken record!!!
+Cringe cringe cringe cringe!!!		@P@
+Cringe, based, based! Onions? Onions,	SNOYY!!
+Onions L. O. L. onions! Cringe, BOOMER?? Le zoomer, I am BOOMER!!!
+@P@ @P@
+
+linLen = 300
+
+OUTPUT:
+Is that all you crapposting fricks can say?!?
+
+Duurrhhlll...  Based, based, cringe, cringe, based, based, cringe, cringe, cringe, based, cringe...  I feel like I'm in a frickING asylum full of dementia-ridden old people that can do nothing but repeat the same FRICKING words on loop like a fricking broken record!!!  Cringe cringe cringe cringe!!!
+
+Cringe, based, based!  Onions?  Onions, SNOYY!!  Onions L.  O.  L.  onions!  Cringe, BOOMER??  Le zoomer, I am BOOMER!!!
