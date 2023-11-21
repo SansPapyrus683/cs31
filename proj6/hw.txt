@@ -1,5 +1,7 @@
 1-
-a.
+a. *ptr + 1 should be *(ptr + 1) due to operator precedence.
+The loop also prints the array in the wrong order.
+
 int main() {
     int arr[3] = {5, 10, 15};
     int* ptr = arr;
@@ -16,7 +18,10 @@ int main() {
     }
 }
 
-b.
+b. The intial function gives the pointer by value.
+Thus, reassigning the pointer in the old function won't do anything.
+Instead, you have to pass the pointer by reference.
+
 void findMax(int arr[], int n, int*& pToMax) {
     if (n <= 0) return;  // no items, no maximum!
 
@@ -27,29 +32,102 @@ void findMax(int arr[], int n, int*& pToMax) {
     }
 }
 
-c.
+c. ptr is uninitialized.
+A simple way to fix this is to assign it to the address of an int, as follows:
 
-d.
+int main() {
+    int x;
+    int *ptr = &x;
+    computeCube(5, ptr);
+    cout << "Five cubed is " << *ptr << endl;
+}
+
+d. The old function, when comparing characters, didn't dereference the pointers to them.
+This caused the memory addresses themselves to be compared instead.
+
+bool strequal(const char str1[], const char str2[]) {
+    while (*str1 != 0 && *str2 != 0)  // zero bytes at ends
+    {
+        if (*str1 != *str2)  // compare corresponding characters
+            return false;
+        str1++;  // advance to the next character
+        str2++;
+    }
+    return *str1 == *str2;  // both ended at same time?
+}
+
+e. getPtrToArray is returning a pointer to an array that has been allocated on the stack.
+Since that array is deallocated when the function returns, that pointers is now invalid.
 
 2-
-a.
-b.
-c.
-d.
-e.
-f.
-g.
-h.
-i.
-j.
+a. double* cat;
+b. double mouse[5];
+c. cat = mouse + 4;
+d. *cat = 25;
+e. *(mouse + 3) = 17;
+f. cat -= 3;
+g. *(cat + 1) = 42;
+h. cat[0] = 54;
+i. bool d = cat == mouse;
+j. bool b = *cat == *(cat + 1);
 
 3-
 a.
+double mean(const double* scores, int numScores) {
+    double tot = 0;
+    for (int i = 0; i < numScores; i++) {
+        tot += *(scores + i);
+    }
+    return tot / numScores;
+}
 
 b.
+const char* findTheChar(const char* str, char chr) {
+    for (int k = 0; *(str + k) != 0; k++)
+        if (*(str + k) == chr)
+            return &*(str + k);
+
+    return nullptr;
+}
 
 c.
+const char* findTheChar(char* str, char chr) {
+    while (*str != 0) {
+        if (*str == chr) {
+            return str;
+        }
+        str++;
+    }
+    return nullptr;
+}
 
 4-
+First, maxwell returns the pointer that points to the greater element,
+so ptr is assigned the first element of the array.
+The value ptr pointers to (aka the first element of the array) is changed to -1.
+ptr is then moved forward by 2 and the one after it (aka the fourth element)
+is changed to 9.
+Finally, the second element of the array is assigned to 79.
+
+cout << &array[5] - ptr << endl;
+This prints out 3 because currently ptr points to index 2.
+
+The final for loop prints out 4, 79, -1, 9, 22, and 19, each on a new line.
+The order is changed due to swap2. swap1 does not affect the array because
+it does not change anything the pointers point to, and the pointers themselves
+are passed by value.
 
 5-
+void removeS(char* str) {
+    while (*str != 0) {
+        if (*str == 's' || *str == 'S') {
+            char* at = str + 1;
+            while (*at == 's' || *at == 'S') {
+                at++;
+            }
+            *str = *at;
+            *at = *at != 0 ? 's' : 0;
+        }
+        str++;
+    }
+}
