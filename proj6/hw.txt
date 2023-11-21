@@ -1,0 +1,55 @@
+1-
+a.
+int main() {
+    int arr[3] = {5, 10, 15};
+    int* ptr = arr;
+
+    *ptr = 30;  // set arr[0] to 30
+    *(ptr + 1) = 20;  // set arr[1] to 20
+    ptr += 2;
+    ptr[0] = 10;    // set arr[2] to 10
+
+    ptr -= 2;  // reset ptr
+    while (ptr < arr + (sizeof(arr) / sizeof(int))) {
+        cout << *ptr << endl;    // print values
+        ptr++;
+    }
+}
+
+b.
+void findMax(int arr[], int n, int*& pToMax) {
+    if (n <= 0) return;  // no items, no maximum!
+
+    pToMax = arr;
+
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > *pToMax) pToMax = arr + i;
+    }
+}
+
+c.
+
+d.
+
+2-
+a.
+b.
+c.
+d.
+e.
+f.
+g.
+h.
+i.
+j.
+
+3-
+a.
+
+b.
+
+c.
+
+4-
+
+5-
