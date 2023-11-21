@@ -75,9 +75,6 @@ int render(int linLen, istream& inf, ostream& outf) {
 
                 int spaces = first ? spacesAfter(lastOut) : 0;
                 // the current word along with the previous spaces have to fit
-                if (strcmp(slice, "jungle") == 0) {
-                    printf("%i %i %i\n", currLen, spaces, pLen);
-                }
                 if (currLen + spaces + pLen > linLen) {
                     // output linLen length chunks of the string until the end
                     for (int at = 0; at < pLen; at += linLen) {
