@@ -1,1 +1,2 @@
-*.html -linguist-detectable
+**/spec.html -linguist-detectable
+**/test.sh -linguist-detectable
