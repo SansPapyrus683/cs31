@@ -161,10 +161,6 @@ int Tooter::col() const {
 void Tooter::move() {
     // Attempt to move in a random direction; if it can't move, don't move.
     // If the player is there, don't move.
-    if (m_city == nullptr) {
-        return;
-    }
-
     int dir = randInt(0, NUMDIRS - 1);  // dir is now UP, DOWN, LEFT, or RIGHT
     int r = m_row;
     int c = m_col;
@@ -224,10 +220,6 @@ void Player::preach() {
 
 void Player::move(int dir) {
     m_age++;
-
-    if (m_city == nullptr) {
-        return;
-    }
 
     int r = m_row;
     int c = m_col;
