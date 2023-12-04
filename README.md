@@ -1,3 +1,6 @@
 # cs31
 
-solutions to ucla fall 2023 cs 31 projects
+for some stupid reason ucla doesn't keep their course sites up
+
+so i'm saving the project specs and their test data in here  
+of course, my solutions and reports to the projects are here as well
