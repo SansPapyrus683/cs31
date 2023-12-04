@@ -1,0 +1,166 @@
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <title>Project 3 Test Data</title>
+</head>
+<body>
+<h2>Project 3 Test Data</h2>
+<p>
+You had to implement the functions with the specified signatures.  In
+particular, you could not change the number or types of the parameters
+(e.g., changing <code>int</code> to <code>int&amp;</code>).
+</p><p>
+There were 54 test cases, worth 85 points in all:
+</p>
+<h3>
+performCommands, error cases
+</h3>
+<table border="1" cellspacing="0" cellpadding="5">
+<colgroup span="5" align="center"></colgroup>
+<tr><th>Test #</th><th>Points</th><th>Command</th><th>plotChar</th><th>mode</th><th>Return<br/>value</th><th>Resulting<br/>bad position</th></tr>
+<tr><td>1</td><td>2</td><td><code>HCCC</code></td><td><code>*</code></td><td>0 (FG)</td><td>1</td><td>1</td></tr>
+<tr><td>2</td><td>2</td><td><code>H-CCC</code></td><td><code>*</code></td><td>0 (FG)</td><td>1</td><td>2</td></tr>
+<tr><td>3</td><td>2</td><td><code>H123</code></td><td><code>*</code></td><td>0 (FG)</td><td>1</td><td>3</td></tr>
+<tr><td>4</td><td>2</td><td><code>F\tC</code></td><td><code>*</code></td><td>0 (FG)</td><td>1</td><td>1</td></tr>
+<tr><td>5</td><td>2</td><td><code>@CCC</code></td><td><code>*</code></td><td>0 (FG)</td><td>1</td><td>0</td></tr>
+<tr><td>6</td><td>2</td><td><code>CCCV</code></td><td><code>*</code></td><td>0 (FG)</td><td>1</td><td>4</td></tr>
+<tr><td>7</td><td>2</td><td><code>CCCV-</code></td><td><code>*</code></td><td>0 (FG)</td><td>1</td><td>5</td></tr>
+<tr><td>8</td><td>2</td><td><code>CCCB</code></td><td><code>*</code></td><td>0 (FG)</td><td>1</td><td>4</td></tr>
+<tr><td>18</td><td>2</td><td><code>H4H4H4H4</code></td><td><code>*</code></td><td>0 (FG)</td><td>3</td><td>6</td></tr>
+<tr><td>19</td><td>2</td><td><code>V10V02</code></td><td><code>*</code></td><td>0 (FG)</td><td>3</td><td>3</td></tr>
+<tr><td>20</td><td>2</td><td><code>H03H-04</code></td><td><code>*</code></td><td>0 (FG)</td><td>3</td><td>3</td></tr>
+<tr><td>21</td><td>2</td><td><code>V3V-4</code></td><td><code>*</code></td><td>0 (FG)</td><td>3</td><td>2</td></tr>
+<tr><td>22</td><td>1</td><td><code>H1</code></td><td><code>\t</code></td><td>1 (BG)</td><td>2</td><td>unchanged</td></tr>
+<tr><td>23</td><td>1</td><td><code>B\t</code></td><td><code>\t</code></td><td>1 (BG)</td><td>2</td><td>unchanged</td></tr>
+<tr><td>24</td><td>1</td><td><code>H1</code></td><td><code>*</code></td><td>7</td><td>2</td><td>unchanged</td></tr>
+<tr><td>25</td><td>1</td><td><code>HX</code></td><td><code>\t</code></td><td>7</td><td>2</td><td>unchanged</td></tr>
+</table>
+<h4>
+Notes
+</h4>
+<p>
+In the above cases, <code>performCommands</code> was called for a grid of
+12 rows and 16 columns.
+</p><p>
+For test 4, note that <code>isprint('\t')</code> is false.
+</p><p>
+It was your choice whether test cases 3 and 18 through 21 plot anything.
+The other test cases above must not plot any nonblank characters.
+</p><p>
+Test cases 22 through 25 must not change plotChar and mode.
+</p>
+<h3>
+performCommands, valid cases
+</h3>
+<table border="1" cellspacing="0" cellpadding="5">
+<colgroup span="8" align="center"></colgroup>
+<tr><th>Test #</th><th>Points</th><th>Command</th><th>plotChar</th><th>mode</th><th>Return<br/>value</th><th>Resulting<br/>bad position</th><th>Resulting<br/>plotChar</th><th>Resulting<br/>mode</th><th>Points plotted</th></tr>
+<tr><td>9</td><td>2</td><td><code>FBCBFH1</code><td><code>*</code></td><td>0 (FG)</td></td><td>0</td><td>unchanged</td>
+<td><code>*</code></td><td>0 (FG)</td><td><code>F</code> at (1,1), (1,2)</td></tr>
+<tr><td>10</td><td>2</td><td><code>H3V2</code></td><td><code>*</code></td><td>0 (FG)</td><td>0</td><td>unchanged</td>
+<td><code>*</code></td><td>0 (FG)</td><td><code>*</code> at (1,1), (1,2), (1,3), (1,4), (2,4), (3,4)</td></tr>
+<tr><td>11</td><td>2</td><td><code>H3V2CV1</code></td><td><code>*</code></td><td>0 (FG)</td><td>0</td><td>unchanged</td>
+<td><code>*</code></td><td>0 (FG)</td><td><code>*</code> at (1,1), (2,1)</td></tr>
+<tr><td>12</td><td>2</td><td><code>H3F%V2</code></td><td><code>*</code></td><td>0 (FG)</td><td>0</td><td>unchanged</td>
+<td><code>*</code></td><td>0 (FG)</td><td><code>*</code> at (1,1), (1,2), (1,3);<br/><code>%</code> at (1,4), (2,4), (3,4)</td></tr>
+<tr><td>13</td><td>2</td><td><code>V3B%H2</code></td><td><code>*</code></td><td>0 (FG)</td><td>0</td><td>unchanged</td>
+<td><code>*</code></td><td>0 (FG)</td><td><code>*</code> at (1,1), (2,1), (3,1), (4,1);<br/><code>%</code> at (4,2), (4,3)</td></tr>
+<tr><td>14</td><td>2</td><td><code>H3F%V2B$H1</code></td><td><code>*</code></td><td>0 (FG)</td><td>0</td><td>unchanged</td>
+<td><code>*</code></td><td>0 (FG)</td><td><code>*</code> at (1,1), (1,2), (1,3);<br/><code>%</code> at (1,4), (2,4), (3,4);<br/><code>$</code> at (3,5)</td></tr>
+<tr><td>15</td><td>2</td><td><code>H3B%V2CH1</code></td><td><code>*</code></td><td>0 (FG)</td><td>0</td><td>unchanged</td>
+<td><code>*</code></td><td>0 (FG)</td><td><code>*</code> at (1,1), (1,2)</td></tr>
+<tr><td>16</td><td>2</td><td><code>H1F%</code></td><td><code>#</code></td><td>1 (BG)</td><td>0</td><td>unchanged</td>
+<td><code><code>%</code></code></td><td>0 (FG)</td><td><code>#</code> at (1,1), (1,2)</td></tr>
+<tr><td>17</td><td>2</td><td><code>H1</code></td><td><code>#</code></td><td>1 (BG)</td><td>0</td><td>unchanged</td>
+<td><code><code>#</code></code></td><td>1 (BG)</td><td><code>#</code> at (1,1), (1,2)</td></tr>
+<tr><td>26</td><td>1</td><td><code>H1</code></td><td><code>*</code></td><td>0 (FG)</td><td>0</td><td>unchanged</td>
+<td><code>*</code></td><td>0 (FG)</td><td><code>*</code> at (1,1), (1,2)</td></tr>
+<tr><td>27</td><td>1</td><td><code>F#</code></td><td><code>*</code></td><td>0 (FG)</td><td>0</td><td>unchanged</td>
+<td><code>#</code></td><td>0 (FG)</td><td>none</td></tr>
+<tr><td>28</td><td>1</td><td><code>B$</code></td><td><code>*</code></td><td>0 (FG)</td><td>0</td><td>unchanged</td>
+<td><code>$</code></td><td>1 (BG)</td><td>none</td></tr>
+<tr><td>29</td><td>1</td><td><code>H0</code></td><td><code>*</code></td><td>0 (FG)</td><td>0</td><td>unchanged</td>
+<td><code>*</code></td><td>0 (FG)</td><td><code>*</code> at (1,1)</td></tr>
+<tr><td>30</td><td>1</td><td><code>v02</code></td><td><code>*</code></td><td>0 (FG)</td><td>0</td><td>unchanged</td>
+<td><code>*</code></td><td>0 (FG)</td><td><code>*</code> at (1,1), (2,1), (3,1)</td></tr>
+<tr><td>31</td><td>1</td><td><code>F </code> (blank after the F)</td><td><code>*</code></td><td>0 (FG)</td><td>0</td><td>unchanged</td>
+<td><code> </code> (blank)</td><td>0 (FG)</td><td>none</td></tr>
+<tr><td>32</td><td>1</td><td><code>C</code></td><td><code>#</code></td><td>1 (BG)</td><td>0</td><td>unchanged</td>
+<td><code>*</code></td><td>0 (FG)</td><td>none</td></tr>
+<tr><td>33</td><td>1</td><td><code>H1C</code></td><td><code>*</code></td><td>0 (FG)</td><td>0</td><td>unchanged</td>
+<td><code>*</code></td><td>0 (FG)</td><td>none</td></tr>
+</table>
+<h4>
+Notes
+</h4>
+<p>
+In the above cases, <code>performCommands</code> was called for a grid of
+12 rows and 16 columns.
+</p>
+<h3>
+plotLine
+</h3>
+<table border="1" cellspacing="0" cellpadding="5">
+<colgroup span="10" align="center"></colgroup>
+<tr><th>Test #</th><th>Points</th><th>Row</th><th>Column</th><th>Distance</th><th>Direction</th><th>Plot char</th><th>mode</th><th>Return<br/>value</th><th>Points plotted</th></tr>
+<tr><td>34</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1 (VERT)</td>
+<td><code>#</code></td><td>0 (FG)</td><td>false</td><td>none</td></tr>
+<tr><td>35</td><td>1</td><td>-1</td><td>1</td><td>1</td><td>1 (VERT)</td>
+<td><code>#</code></td><td>0 (FG)</td><td>false</td><td>none</td></tr>
+<tr><td>36</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0 (HORIZ)</td>
+<td><code>#</code></td><td>0 (FG)</td><td>false</td><td>none</td></tr>
+<tr><td>37</td><td>1</td><td>1</td><td>-1</td><td>1</td><td>1 (HORIZ)</td>
+<td><code>#</code></td><td>0 (FG)</td><td>false</td><td>none</td></tr>
+<tr><td>38</td><td>1</td><td>15</td><td>1</td><td>-1</td><td>1 (VERT)</td>
+<td><code>#</code></td><td>0 (FG)</td><td>true</td><td><code>#</code> at (15,1), (14,1)</td></tr>
+<tr><td>39</td><td>1</td><td>16</td><td>1</td><td>-1</td><td>1 (VERT)</td>
+<td><code>#</code></td><td>0 (FG)</td><td>false</td><td>none</td></tr>
+<tr><td>40</td><td>1</td><td>1</td><td>22</td><td>-1</td><td>0 (HORIZ)</td>
+<td><code>#</code></td><td>0 (FG)</td><td>true</td><td><code>#</code> at (1,22), (1,21)</td></tr>
+<tr><td>41</td><td>1</td><td>1</td><td>23</td><td>-1</td><td>0 (HORIZ)</td>
+<td><code>#</code></td><td>0 (FG)</td><td>false</td><td>none</td></tr>
+<tr><td>42</td><td>1</td><td>1</td><td>1</td><td>1</td><td>2</td>
+<td><code>#</code></td><td>0 (FG)</td><td>false</td><td>none</td></tr>
+<tr><td>43</td><td>1</td><td>1</td><td>1</td><td>1</td><td>0 (HORIZ)</td>
+<td><code>\t</code></td><td>0 (FG)</td><td>false</td><td>none</td></tr>
+<tr><td>44</td><td>1</td><td>1</td><td>1</td><td>1</td><td>0 (HORIZ)</td>
+<td><code>#</code></td><td>2</td><td>false</td><td>none</td></tr>
+<tr><td>45</td><td>2</td><td>10</td><td>15</td><td>2</td><td>0 (HORIZ)</td>
+<td><code>#</code></td><td>0 (FG)</td><td>true</td><td><code>#</code> at (10,15), (10,16), (10,17)</td></tr>
+<tr><td>46</td><td>2</td><td>10</td><td>15</td><td>-2</td><td>0 (HORIZ)</td>
+<td><code>$</code></td><td>0 (FG)</td><td>true</td><td><code>$</code> at (10,15), (10,14), (10,13)</td></tr>
+<tr><td>47</td><td>2</td><td>10</td><td>15</td><td>2</td><td>1 (VERT)</td>
+<td><code>#</code></td><td>0 (FG)</td><td>true</td><td><code>#</code> at (10,15), (11,15), (12,15)</td></tr>
+<tr><td>48</td><td>2</td><td>10</td><td>15</td><td>-2</td><td>1 (VERT)</td>
+<td><code>$</code></td><td>0 (FG)</td><td>true</td><td><code>$</code> at (10,15), (9,15), (8,15)</td></tr>
+<tr><td>49</td><td>2</td><td>10</td><td>15</td><td>0</td><td>0 (HORIZ)</td>
+<td><code>#</code></td><td>0 (FG)</td><td>true</td><td><code>#</code> at (10,15)</td></tr>
+<tr><td>50</td><td>2</td><td>10</td><td>15</td><td>0</td><td>1 (VERT)</td>
+<td><code>#</code></td><td>0 (FG)</td><td>true</td><td><code>#</code> at (10,15)</td></tr>
+<tr><td>51</td><td>2</td><td>10</td><td>15</td><td>1</td><td>1 (VERT)</td>
+<td><code>A</code></td><td>0 (FG)</td><td>true</td><td><code>A</code> at (10,15), (11,15)</td></tr>
+<tr><td>52</td><td>2</td><td>10</td><td>15</td><td>2</td><td>0 (HORIZ)</td>
+<td><code> </code> (blank)</td><td>0 (FG)</td><td>true</td><td>none (see note)</td></tr>
+<tr><td>53</td><td>2</td><td>10</td><td>15</td><td>2</td><td>0 (HORIZ)</td>
+<td><code> </code> (blank)</td><td>1 (BG)</td><td>true</td><td>none</td></tr>
+<tr><td>54</td><td>2</td><td>10</td><td>15</td><td>2</td><td>0 (HORIZ)</td>
+<td><code> </code> (blank)</td><td>1 (BG)</td><td>true</td><td><code>X</code> at (10,16) (see note)</td></tr>
+</table>
+<p>
+<h4>
+Notes
+</h4>
+<p>
+In the above cases, <code>plotLine</code> was called for a grid of 15 rows
+and 22 columns.
+</p><p>
+For test 43, note that <code>isprint('\t')</code> is false.
+</p><p>
+For tests 52 and 54, an <code>X</code> was placed at (10,16) before
+<code>plotLine</code> was called.
+</p>
+</body>
+</html>

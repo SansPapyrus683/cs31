@@ -1,0 +1,298 @@
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <title>Project 5 Test Data</title>
+</head>
+<body>
+<h2>Project 5 Test Data</h2>
+<p>
+There were 42 test cases; the first 41 were worth 2.073 points each; the last
+was the bonus, worth 5 points if you passed that test and at least 36 of all
+the others.  Each test case is represented by an assertion that must be true
+for you to pass that test.  Each test case was run independently.  We renamed
+your main routine to something harmless, and appended this code to your
+program:
+</p>
+<pre>
+#include &lt;iostream>
+#include &lt;sstream>
+#include &lt;streambuf>
+#include &lt;string>
+#include &lt;cassert>
+using namespace std;
+
+class LimitOutputStreambuf : public streambuf
+{
+    public:
+        LimitOutputStreambuf(streambuf* sb, size_t lim)
+         : real_streambuf(sb), limit(lim)
+        {
+                static char dummy;
+                setp(&amp;dummy, &amp;dummy);
+        }
+    private:
+        streambuf* real_streambuf;
+        size_t limit;
+
+        int overflow(int c)
+        {
+                if (limit == 0)
+                        return traits_type::eof();
+                limit--;
+                return real_streambuf->sputc(c);
+        }
+};
+
+class StreambufSwitcher
+{
+    public:
+	StreambufSwitcher(ios&amp; dest, streambuf* sb,
+					ios::iostate exceptions = ios::goodbit)
+	 : dest_stream(dest), oldsb(dest.rdbuf(sb)), oldex(dest.exceptions())
+	{ dest_stream.exceptions(exceptions); }
+	StreambufSwitcher(ios&amp; dest, ios&amp; src)
+	 : StreambufSwitcher(dest, src.rdbuf(), src.exceptions())
+	{}
+	~StreambufSwitcher()
+	{ dest_stream.rdbuf(oldsb); dest_stream.exceptions(oldex); }
+    private:
+	ios&amp; dest_stream;
+	streambuf* oldsb;
+	ios::iostate oldex;
+};
+
+string repeat(size_t n, string s)
+{
+	string result;
+	result.reserve(n * s.size());
+	for ( ; n > 0; n--)
+		result += s;
+	return result;
+}
+
+int render(int lineLength, istream&amp; inf, ostream&amp; outf);
+
+void testone(int n)
+{
+	istringstream iss;
+	StreambufSwitcher ssi(cin, iss.rdbuf());
+
+	ostringstream oss;
+	LimitOutputStreambuf lob(oss.rdbuf(), 1000*1000+10);
+	StreambufSwitcher sso(cout, &amp;lob);
+
+	LimitOutputStreambuf lob2(cerr.rdbuf(), 0);
+	StreambufSwitcher sse(cerr, &amp;lob2);
+
+	switch (n)
+	{
+                                 default: {
+		cout &lt;&lt; "Bad argument" &lt;&lt; endl;
+                        } break; case  1: {
+		iss.str("hello there\n\nthis is a test\n");
+		assert(render(0, iss, oss) == 2);
+                        } break; case  2: {
+		iss.str("hello there\n\nthis is a test\n");
+		render(0, iss, oss);
+		assert(oss.str().empty());
+                        } break; case  3: {
+		iss.str("hello there\n\nthis is a test\n");
+		ostringstream oss2;
+		StreambufSwitcher sso2(cout, oss2.rdbuf());
+		render(11, iss, oss);
+		assert(oss2.str().empty());
+                        } break; case  4: {
+		iss.str("hello there\n\nthis is a test\n");
+		istringstream iss2("Z Y X W V\n");
+		StreambufSwitcher ssi2(cin, iss2.rdbuf());
+                render(11, iss, oss);
+		string s = oss.str();
+		assert(s.find_first_of("ZYXWV") == string::npos  &amp;&amp;
+		s.find("hello") != string::npos);
+                        } break; case  5: {
+		iss.str("");
+		assert(render(10, iss, oss) == 0  &amp;&amp;  oss.str().empty());
+                        } break; case  6: {
+		iss.str("     \n\n    \n\n");
+		assert(render(10, iss, oss) == 0  &amp;&amp;  oss.str().empty());
+                        } break; case  7: {
+		iss.str("abcdefghi abcdefghijk\n");
+		assert(render(10, iss, oss) == 1);
+                        } break; case  8: {
+		iss.str("abcdefghi abcdefghijk abc abc abc abc abc abc abc\n");
+		assert(render(10, iss, oss) == 1);
+                        } break; case  9: {
+		iss.str("abcdefghi abcdefghij\n");
+		assert(render(10, iss, oss) == 0);
+                        } break; case 10: {
+		iss.str("abcdefghi abcdefgh-ijk\n");
+		assert(render(10, iss, oss) == 0);
+                        } break; case 11: {
+		iss.str("hello there\n");
+		render(30, iss, oss);
+		assert(oss.str().find("hello there") != string::npos);
+                        } break; case 12: {
+		iss.str("hello       there\n");
+		render(30, iss, oss);
+		assert(oss.str().find("hello there") != string::npos);
+                        } break; case 13: {
+		iss.str("hello. there? bye\n");
+		render(30, iss, oss);
+		assert(oss.str().find("hello.  there?  bye") != string::npos);
+                        } break; case 14: {
+		iss.str("hello! there: bye\n");
+		render(30, iss, oss);
+		assert(oss.str().find("hello!  there:  bye") != string::npos);
+                        } break; case 15: {
+		iss.str("hello? there\n");
+		render(30, iss, oss);
+		assert(oss.str().find("hello?  there") != string::npos);
+                        } break; case 16: {
+		iss.str("hello. abcdefghi\n");
+		render(10, iss, oss);
+		assert(oss.str().find("hello.\na") != string::npos);
+                        } break; case 17: {
+		iss.str("hello.there\n");
+		render(30, iss, oss);
+		assert(oss.str().find("hello.there") != string::npos);
+                        } break; case 18: {
+		iss.str("hello'3*%there\n");
+		render(30, iss, oss);
+		assert(oss.str().find("hello'3*%there") != string::npos);
+                        } break; case 19: {
+		iss.str("hello-there\n");
+		render(30, iss, oss);
+		assert(oss.str().find("hello-there") != string::npos);
+                        } break; case 20: {
+		iss.str("hello\nthere\n");
+		render(30, iss, oss);
+		assert(oss.str().find("hello there") != string::npos);
+                        } break; case 21: {
+		iss.str("abcdefg hijkl\n");
+		render(10, iss, oss);
+		assert(oss.str().find("abcdefg\n") != string::npos);
+                        } break; case 22: {
+		iss.str("abcdefg hijkl\n");
+		render(10, iss, oss);
+		assert(oss.str().find("\nhijkl") != string::npos);
+                        } break; case 23: {
+		iss.str("hellohello abcdef ghi jklmnop\n");
+		render(10, iss, oss);
+		assert(oss.str().find("\nabcdef ghi\n") != string::npos);
+                        } break; case 24: {
+		iss.str("hellohello abcdef ghi jklmnop qrst\n");
+		render(10, iss, oss);
+		assert(oss.str().find("\nqrst") != string::npos);
+                        } break; case 25: {
+		iss.str("abcdefg x-ray\n");
+		render(10, iss, oss);
+		assert(oss.str().find("x-\nray") != string::npos);
+                        } break; case 26: {
+		iss.str("abcdefg abc xyz-pq-rs\n");
+		render(10, iss, oss);
+		assert(oss.str().find("xyz-\npq-rs") != string::npos);
+                        } break; case 27: {
+		iss.str("abcdefg abc x-yz-pqr\n");
+		render(10, iss, oss);
+		assert(oss.str().find("x-yz-\npqr") != string::npos);
+                        } break; case 28: {
+		iss.str("abcdefg abc xyz----yz\n");
+		render(10, iss, oss);
+		assert(oss.str().find("xyz---\n-yz") != string::npos);
+                        } break; case 29: {
+		iss.str("abcdefg -xyz\n");
+		render(10, iss, oss);
+		assert(oss.str().find(" -\nxyz") != string::npos);
+                        } break; case 30: {
+		iss.str("abcdefg abc abcdefghijklmnopqrstuvw\n");
+		render(10, iss, oss);
+		assert(oss.str().find("\nabcdefghij\nklmnopqrst\nuvw") != string::npos);
+                        } break; case 31: {
+		iss.str("abc\n");
+		render(10, iss, oss);
+		assert(oss.str() == "abc\n");
+                        } break; case 32: {
+		iss.str("abc @P@ def\n");
+		render(10, iss, oss);
+		assert(oss.str().find("abc\n\ndef") != string::npos);
+                        } break; case 33: {
+		iss.str("abc @P@  @P@ def\n");
+		render(10, iss, oss);
+		assert(oss.str().find("abc\n\ndef") != string::npos);
+                        } break; case 34: {
+		iss.str("abc\n@P@\ndef\n");
+		render(10, iss, oss);
+		assert(oss.str().find("abc\n\ndef") != string::npos);
+                        } break; case 35: {
+		iss.str("@P@ abc @P@ def\n");
+		render(10, iss, oss);
+		string result("abc\n\ndef\n");
+		assert(oss.str() == result  ||
+				result.compare(0, 8, oss.str()) == 0);
+                        } break; case 36: {
+		iss.str("abc @P@ def\n@P@\n");
+		render(10, iss, oss);
+		assert(oss.str() == "abc\n\ndef\n");
+                        } break; case 37: {
+		iss.str("@P@ @P@ @P@ abc @P@ def @P@ @P@ @P@\n");
+		render(30, iss, oss);
+		assert(oss.str() == "abc\n\ndef\n");
+                        } break; case 38: {
+		string s25 = "abcdefghijklmnopqrstuvwxy";
+		string s178(repeat(7, s25) + "abc");
+		iss.str(s178 + "\n");
+		assert(render(179, iss, oss) == 0);
+		string result(s178 + "\n");
+		assert(oss.str() == result  ||
+				result.compare(0, 178, oss.str()) == 0);
+                        } break; case 39: {
+		string s24 = "abcdefghijklmnopqrstuvwx";
+		string s123(repeat(5, s24) + "abc");
+		iss.str(s123 + "\n" + s123 + "\n");
+		assert(render(249, iss, oss) == 0);
+		string result(s123 + " " + s123 + "\n");
+		assert(oss.str() == result  ||
+				result.compare(0, 247, oss.str()) == 0);
+                        } break; case 40: {
+		string s10 = "a\na\na\na\na\na\na\na\na\na\n";
+		string s100(repeat(10, s10));
+		string s20000(repeat(200, s100)); // For some people, 200 was 20000
+		iss.str(s20000);
+		render(2, iss, oss);
+		assert(oss.str() == s20000  ||
+				s20000.compare(0, 19999, oss.str()) == 0);
+                        } break; case 41: {
+		string s25 = "abcdefghijklmnopqrstuvwxy";
+		string s178(repeat(7, s25) + "abc");
+		iss.str(repeat(11, s178 + "\n"));
+		int n = render(2000, iss, oss);
+		string result(repeat(11-1, s178 + " ") + s178 + "\n");
+		assert((n == 2  &amp;&amp;  oss.str().empty())  ||  (n == 0  &amp;&amp;
+				(oss.str() == result  ||
+				 result.compare(0, 11*(178+1)-1, oss.str()) == 0)));
+                        } break; case 42: {
+		string s25 = "abcdefghijklmnopqrstuvwxy";
+		string s178(repeat(7, s25) + "abc");
+		iss.str(repeat(550, s178 + "\n"));
+		assert(render(99000, iss, oss) == 0);
+		string result(repeat(550-1, s178 + " ") + s178 + "\n");
+		assert(oss.str() == result  ||
+				 result.compare(0, 550*(178+1)-1, oss.str()) == 0);
+                        } break;
+	}
+}
+
+int main()
+{
+	cout &lt;&lt; "Enter test number: ";
+	int n;
+	cin >> n;
+	testone(n);
+	cout &lt;&lt; "Passed" &lt;&lt; endl;
+}
+</pre>
+</body>
+</html>

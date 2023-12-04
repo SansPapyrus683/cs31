@@ -1,0 +1,258 @@
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <title>CS 31 Project 6 Solutions, Fall 2023</title>
+</head>
+<body>
+<div align="right">
+Fall 2023 CS 31
+</div>
+<div align="center">
+<h2>Project 6 Solutions</h2>
+</div>
+<ol>
+<li>
+<ol style="list-style: lower-alpha">
+<li>
+<p>
+First, because of the operators' order of precedence, the expression
+<code>*ptr + 1 = 20</code> means <code>(*ptr) + 1 = 20</code>.  The
+expression <code>(*ptr) + 1</code> evaluates to the int 31, not an int
+variable that can be assigned to.  When corrected to <code>*(ptr+1) = 20</code>,
+the expression means <code>*(&amp;arr[1]) = 20</code>, which means
+<code>arr[1] = 20</code>.
+</p>
+<p>
+Second, the while loop doesn't access <code>arr[2]</code>, and tries to
+access <code>arr[-1]</code>.  One possible fix is
+</p>
+<pre>
+	for (ptr = arr; ptr < arr + 3; ptr++)
+		cout &lt;&lt; *ptr &lt;&lt; endl;
+</pre>
+</li>
+<li>
+<p>
+<code>findMax</code> puts the correct value in <code>pToMax</code>, but
+<code>pToMax</code> is a <em>copy</em> of the caller's variable
+<code>ptr</code>, so <code>findMax</code> has no effect on <code>ptr</code>.
+The parameter <code>pToMax</code> must be passed by reference, not by value:
+</p>
+<pre>
+	void findMax(int arr[], int n, int*<strong>&amp;</strong> pToMax)
+</pre>
+</li>
+<li>
+<p>
+The declaration <code>int* ptr;</code> declares <code>ptr</code> to be a
+pointer to int, but leaves it uninitialized &mdash; it does not point to any
+particular int.  That uninitialized pointer is copied into the parameter
+<code>ncubed</code>.  In the expression
+<code>*ncubed = n*n*n</code>, the attempt to dereference the
+uninitialized <code>ncubed</code> pointer leads to undefined behavior.
+A fix would be to make sure <code>computeCube</code> is passed a valid
+pointer; one possibility is, in the main routine, to say:
+</p>
+<pre>
+	<strong>int k;</strong>
+	int* ptr <strong>= &amp;k</strong>;
+</pre>
+</li>
+<li>
+<p>
+The test <code>str1 != 0</code> is asking if the <code>str1</code> pointer
+itself has a value different from the null pointer.  (The integer constant
+<code>0</code> used in a context where a pointer is required means the
+null pointer.)  The test we want, though, is to see if the character
+<em>pointed to</em> by <code>str1</code> is different from the zero byte that
+marks the end of a C string.  (The same applies to <code>str2</code>.)
+</p>
+<p>
+Similarly, the test <code>str1 != str2</code> is asking whether those two
+pointers have different values (i.e., they point to different places).  But
+what should be tested is whether the characters they <em>point to</em> have
+different values.  (The same applies to <code>str1 == str2</code>.)
+</p>
+<p>
+The corrected function body is thus
+</p>
+<pre>
+	while (<strong>*</strong>str1 != '\0'  &amp;&amp;  <strong>*</strong>str2 != '\0')  // 0 instead of '\0' is also OK
+	{
+	    if (<strong>*</strong>str1 != <strong>*</strong>str2)
+		return false;
+	    str1++;
+	    str2++;
+	}
+	return <strong>*</strong>str1 == <strong>*</strong>str2;
+</pre>
+</li>
+<li>
+<p>
+The storage for the local variable <code>anArray</code> goes away when
+the function <code>getPtrToArray</code> returns.  But that function returns
+a pointer to that storage.  Attempting to follow that pointer in the main
+routine (implied by <code>ptr[i]</code>) yields undefined behavior.
+</p>
+</li>
+</ol>
+</li>
+<li>
+<ol style="list-style: lower-alpha">
+<li>
+<code>double* cat;</code>
+</li>
+<li>
+<code>double mouse[5];</code>
+</li>
+<li>
+<code>cat = &amp;mouse[4];</code>&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;<code>cat = mouse + 4;</code>
+</li>
+<li>
+<code>*cat = 25;</code>
+</li>
+<li>
+<code>*(mouse + 3) = 17;</code>
+</li>
+<li>
+<code>cat -= 3;</code>
+</li>
+<li>
+<code>cat[1] = 42;</code>
+</li>
+<li>
+<code>cat[0] = 54;</code>
+</li>
+<li>
+<code>bool d = cat == mouse;</code>&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;<code>bool d = cat == &amp;mouse[0];</code>
+</li>
+<li>
+<code>bool b = *cat == *(cat+1);</code>
+</li>
+</ol>
+<br/>
+</li>
+<li>
+<ol style="list-style: lower-alpha">
+<li>
+<pre>
+double mean(const double* scores, int numScores)
+{
+    <strong>int k = 0;</strong>
+    double tot = 0;
+    while (<strong>k != numScores</strong>)
+    {
+        tot += <strong>*(scores + k)</strong>;
+        <strong>k++;</strong>
+    }
+    return tot/numScores;
+}
+</pre>
+</li>
+<li>
+<pre>
+const char* findTheChar(const char<strong>* str</strong>, char chr)
+{
+    for (int k = 0; <strong>*(str+k)</strong> != 0; k++)
+        if (<strong>*(str+k)</strong> == chr)
+            return <strong>str + k</strong>;
+
+    return nullptr;
+}
+</pre>
+</li>
+<li>
+<pre>
+const char* findTheChar(const char* str, char chr)
+{
+    for ( ; <strong>*str</strong> != 0; <strong>str++</strong>)
+        if (<strong>*str</strong> == chr)
+            return <strong>str</strong>;
+
+    return nullptr;
+}
+</pre>
+</li>
+</ol>
+</li>
+<li>
+<pre>
+3	<em>(see note 4 below)</em>
+4	<em>(see notes 1, 5, and 6 below)</em>
+79	<em>(see notes 3 and 5 below)</em>
+-1	<em>(see note 6 below)</em>
+9	<em>(see note 2 below)</em>
+22
+19
+</pre>
+<ol>
+<li>
+<code>maxwell</code> is called with pointers to
+<code>array[0]</code> and <code>array[2]</code>.  It returns a pointer to
+whichever of the ints pointed to has a larger value.  Since
+<code>array[0]</code> has the larger value, the function returns
+<code>&amp;array[0]</code>.  The expression <code>*ptr = -1</code> sets
+<code>array[0]</code> to -1.
+</li>
+<li>
+<code>ptr[i] = 9;</code> sets <code>array[3]</code> to 9.
+</li>
+<li>
+<code>*(array+1) = 79;</code> sets <code>array[1]</code> to 79.
+</li>
+<li>
+<code>&amp;array[5] - &amp;array[2]</code> is 3.
+</li>
+<li>
+The <code>swap1</code> function swaps its <em>copies</em> of the pointers
+passed in to it, with no effect on the ints pointed to.
+</li>
+<li>
+The <code>swap2</code> function swaps the ints pointed to.
+</li>
+</ol>
+<p>
+</p>
+</li>
+<li>
+<pre>
+void removeS(char* source)
+{
+    char* destination = source;
+    for ( ; *source != '\0'; source++)
+    {
+	if (*source != 's'  &amp;&amp;  *source != 'S')
+	{
+	    *destination = *source;
+	    destination++;
+	}
+    }
+    *destination = '\0';  // Don't forget the zero byte at the end
+}
+</pre>
+<p>
+or
+</p>
+<pre>
+void removeS(char* source)
+{
+    char* destination = source;
+    while (*source != '\0')
+    {
+	if (*source != 's'  &amp;&amp;  *source != 'S')
+	{
+	    *destination = *source;
+	    destination++;
+	}
+	source++;
+    }
+    *destination = '\0';  // Don't forget the zero byte at the end
+}
+</pre>
+</li>
+</ol>
+</body>
+</html>
