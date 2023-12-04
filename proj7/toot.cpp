@@ -165,7 +165,6 @@ void Tooter::move() {
     int r = m_row;
     int c = m_col;
     m_city->determineNewPosition(r, c, dir);
-    cout << r << ' ' << c << ' ' << m_city->player()->row() << ' ' << m_city->player()->col() << endl;
     if (!m_city->isPlayerAt(r, c)) {
         m_row = r;
         m_col = c;
