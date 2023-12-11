@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!-- saved from url=(0062)http://web.cs.ucla.edu/classes/fall23/cs31/Projects/7/faq.html -->
+<!-- saved from url=(0070)https://web.cs.ucla.edu/classes/fall23/cs31/Projects/7/basictests.html -->
 <html xmlns="http://www.w3.org/1999/xhtml" data-darkreader-mode="dynamic" data-darkreader-scheme="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><style class="darkreader darkreader--fallback" media="screen"></style><style class="darkreader darkreader--text" media="screen"></style><style class="darkreader darkreader--invert" media="screen">.jfk-bubble.gtx-bubble, .captcheck_answer_label > input + img, span#closed_text > img[src^="https://www.gstatic.com/images/branding/googlelogo"], span[data-href^="https://www.hcaptcha.com/"] > #icon, #bit-notification-bar-iframe, ::-webkit-calendar-picker-indicator {
     filter: invert(100%) hue-rotate(180deg) contrast(90%) !important;
 }</style><style class="darkreader darkreader--inline" media="screen">[data-darkreader-inline-bgcolor] {
@@ -97,8 +97,8 @@ select:-webkit-autofill {
     background-color: #004daa !important;
     color: #e8e6e3 !important;
 }</style>
- <title>CS 31 Project 7 FAQ, Fall 2023</title>
-<meta name="darkreader" content="45e729a702cceda975cc00e19f444109"><style class="darkreader darkreader--override" media="screen">.vimvixen-hint {
+ <title>Project 7 Basic Tests</title>
+<meta name="darkreader" content="cac9a20408174d9a972374ad47e52390"><style class="darkreader darkreader--override" media="screen">.vimvixen-hint {
     background-color: #7b5300 !important;
     border-color: #d8b013 !important;
     color: #f3e8c8 !important;
@@ -174,155 +174,178 @@ div.mermaid .actor {
   fill: var(--darkreader-neutral-background) !important;
 }
 embed[type="application/pdf"][src="about:blank"] { filter: invert(100%) contrast(90%); }</style></head>
-<body><div id="StayFocusd-infobar" style="display:none;">
-    <img src="chrome-extension://mnmbgeanfddcfbcifopgggikdpnimebe/common/img/eye_19x19_red.png">
-    <span id="StayFocusd-infobar-msg"></span>
-    <span id="StayFocusd-infobar-links">
-        <a id="StayFocusd-infobar-never-show">hide forever</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-        <a id="StayFocusd-infobar-hide">hide once</a>
-    </span>
-</div>
-<div align="right">
-Fall 2023 CS 31
-</div>
-<div align="center">
-<h2>Project 7 FAQ</h2>
-</div>
-<ol>
-<li>
+<body>
+<h2>Project 7 Basic Tests</h2>
 <p>
-<strong>
-Do I have to worry about this warning from Visual C++?
-</strong>
+If you precede your main routine with the declaration
+<code>void doBasicTests();</code>, add the following as the first two lines
+of <code>main</code>:
 </p>
-<pre>	<strong>warning C26495: Variable 'Arena::m_tooters' is uninitialized. Always initialize a member variable (type.6).</strong>
+<pre>	doBasicTests(); // Remove this line after completing test.
+	return 0;       // Remove this line after completing test.
 </pre>
-<p>
-If you're following the convention that m_nTooters always represents how
-many pointers in m_tooters (at positions 0 through m_nTooters-1) have
-well-defined values and that you access only those elements, then no.  The
-compiler is not smart enough to recognize that you're doing that (and thus
-that there's no need for your constructor to initialize all the array
-elements), so it pessimistically assumes you might access one of the
-elements before it's been given a well-defined value and warns you.
-</p>
-</li>
-<li>
-<p>
-<strong>
-I can't figure out what to pass as the first argument to the Tooter
-constructor.  I know it's supposed to be a pointer to the City the
-Tooter is being added to.
-</strong>
-</p>
-<p>
-City::addTooter needs to create a new Tooter.  City::addTooter is a
-member function of the City class.  How does a member function of the City
-class talk about the City object it's operating on?  If you answer this,
-you'll know what to do.  (Why does that last sentence remind me of "Speak,
-friend, and enter" from <em>The Fellowship of the Ring</em>?)
-</p>
-</li>
-<li>
-<p>
-<strong>
-My program seems to work, but crashes when it quits.  What's happening?
-</strong>
-</p>
-<p>
-At the start of your City's destructor code, say
-</p>
-<pre>        cerr &lt;&lt; "Entering City destructor" &lt;&lt; endl;
+append the following to your <code>toot.cpp</code> file, and build and run
+your program under g31, you will test a number of basic aspects of your code.
+<p></p>
+<pre>#include &lt;type_traits&gt;
+#include &lt;cassert&gt;
+
+#define CHECKTYPE(c, f, r, a)  \
+    static_assert(std::is_same&lt;decltype(&amp;c::f), r (c::*)a&gt;::value, \
+       "FAILED: You changed the type of " #c "::" #f);  \
+    { [[gnu::unused]] auto p = static_cast&lt;r(c::*)a&gt;(&amp;c::f); }
+
+void thisFunctionWillNeverBeCalled()
+{
+      // If the student deleted or changed the interfaces to the public
+      // functions, this won't compile.  (This uses magic beyond the scope
+      // of CS 31.)
+
+    Tooter(static_cast&lt;City*&gt;(0), 1, 1);
+    CHECKTYPE(Tooter, row, int, () const);
+    CHECKTYPE(Tooter, col, int, () const);
+    CHECKTYPE(Tooter, move, void, ());
+
+    Player(static_cast&lt;City*&gt;(0), 1, 1);
+    CHECKTYPE(Player, row, int, () const);
+    CHECKTYPE(Player, col, int, () const);
+    CHECKTYPE(Player, age, int, () const);
+    CHECKTYPE(Player, health, int, () const);
+    CHECKTYPE(Player, isPassedOut, bool, () const);
+    CHECKTYPE(Player, preach, void, ());
+    CHECKTYPE(Player, move, void, (int));
+    CHECKTYPE(Player, getGassed, void, ());
+
+    City(1, 1);
+    CHECKTYPE(City, rows, int, () const);
+    CHECKTYPE(City, cols, int, () const);
+    CHECKTYPE(City, player, Player*, () const);
+    CHECKTYPE(City, isPlayerAt, bool, (int,int) const);
+    CHECKTYPE(City, tooterCount, int, () const);
+    CHECKTYPE(City, nTootersAt, int, (int,int) const);
+    CHECKTYPE(City, determineNewPosition, bool, (int&amp;,int&amp;,int) const);
+    CHECKTYPE(City, display, void, () const);
+    CHECKTYPE(City, addTooter, bool, (int,int));
+    CHECKTYPE(City, addPlayer, bool, (int,int));
+    CHECKTYPE(City, preachToTootersAroundPlayer, void, ());
+    CHECKTYPE(City, moveTooters, void, ());
+
+    Game(1, 1, 1);
+    CHECKTYPE(Game, play, void, ());
+}
+
+void doBasicTests()
+{
+    {
+        City walk(10, 20);
+        assert(walk.addPlayer(2, 6));
+        Player* pp = walk.player();
+        assert(walk.isPlayerAt(2, 6)  &amp;&amp; ! pp-&gt;isPassedOut());
+        pp-&gt;move(UP);
+        assert(walk.isPlayerAt(1, 6)  &amp;&amp; ! pp-&gt;isPassedOut());
+        pp-&gt;move(UP);
+        assert(walk.isPlayerAt(1, 6)  &amp;&amp; ! pp-&gt;isPassedOut());
+        for (int k = 1; k &lt;= 11; k++)
+            pp-&gt;getGassed();
+        assert(! pp-&gt;isPassedOut());
+        pp-&gt;getGassed();
+        assert(pp-&gt;isPassedOut());
+    }
+    {
+        City ofAngels(2, 2);
+        assert(ofAngels.addPlayer(1, 1));
+        assert(ofAngels.addTooter(2, 2));
+        Player* pp = ofAngels.player();
+        ofAngels.moveTooters();
+        assert( ! pp-&gt;isPassedOut());
+        for (int k = 0; k &lt; 1000  &amp;&amp; ! pp-&gt;isPassedOut(); k++)
+            ofAngels.moveTooters();
+        assert(pp-&gt;isPassedOut());
+    }
+    {
+        City ousDarth(2, 2);
+        assert(ousDarth.addPlayer(1, 1));
+        for (int k = 0; k &lt; 50; k++)
+        {
+            assert(ousDarth.addTooter(1, 2));
+            assert(ousDarth.addTooter(2, 2));
+        }
+        ousDarth.preachToTootersAroundPlayer();
+        assert(ousDarth.nTootersAt(1, 1) == 0);
+        assert(ousDarth.nTootersAt(2, 1) == 0);
+        for (int r = 1; r &lt;= 2; r++)
+        {     // .9999 probability that between 5 and 29 out of 50 are unconverted
+            int n = ousDarth.nTootersAt(r, 2);
+            assert(n &gt;= 5  &amp;&amp;  n &lt;= 29);
+        }
+        int m = ousDarth.nTootersAt(1, 2);
+        ousDarth.addTooter(1, 2);
+        assert(ousDarth.nTootersAt(1, 2) == m+1);
+    }
+    {
+        City univer(5, 20);
+        univer.addPlayer(3, 3);
+        int r = 1;
+        int c = 1;
+        for (int k = 1; k &lt;= 5*5; k++)
+        {
+            if (r != 3 || c != 3)
+                univer.addTooter(r, c);
+            if (r == 5)
+            {
+                r = c+1;
+                c = 5;
+            }
+            else if (c == 1)
+            {
+                c = r + 1;
+                r = 1;
+            }
+            else
+            {
+                c--;
+                r++;
+            }
+        }
+        assert(univer.tooterCount() == 24);
+        for (int k = 0; k &lt; 1000  &amp;&amp; univer.tooterCount() &gt; 16; k++)
+            univer.preachToTootersAroundPlayer();
+        assert(univer.tooterCount() == 16);
+        for (int r = 1; r &lt;= 5; r++)
+        {
+            for (int c = 1; c &lt;= 5; c++)
+            {
+                int expected = 1;
+                if (r &gt;= 2  &amp;&amp;  r &lt;= 4  &amp;&amp;  c &gt;= 2  &amp;&amp;  c &lt;= 4)
+                    expected = 0;
+                assert(univer.nTootersAt(r, c) == expected);
+            }
+        }
+        univer.addTooter(3, 2);
+        assert(univer.tooterCount() == 17);
+          // If the program crashes after leaving this compound statement, you
+          // are probably messing something up when you delete a Tooter after
+          // it is converted (or you have mis-coded the destructor).
+          //
+          // Draw a picture of your m_tooters array before the Tooters are
+          // preached to and also note the values of m_nTooters or any other
+          // variables you might have that are involved with the number of
+          // Tooters.  Trace through your code step by step as the Tooters
+          // are preached to and removed, updating the picture according to
+          // what the code says, not what you want it to do.  If you don't see
+          // a problem then, try tracing through the destruction of the city.
+          //
+          // If you execute the code, use the debugger to check on the values
+          // of key variables at various points.  If you didn't try to learn
+          // to use the debugger, insert statements that write the values of
+          // key variables to cerr so you can trace the execution of your code
+          // and see the first place where something has gone amiss.  (Comment
+          // out the call to clearScreen in City::display so that your output
+          // doesn't disappear.)
+    }
+    cout &lt;&lt; "Passed all basic tests" &lt;&lt; endl;
+}
 </pre>
-<p>
-and at the end, say
-</p>
-<pre>        cerr &lt;&lt; "Leaving City destructor" &lt;&lt; endl;
-</pre>
-<p>
-Is your destructor causing the crash?  One possibility is that your
-destructor code itself is incorrect, but it's more likely that your
-destructor code is fine, but earlier in the program you were careless
-about managing your array of Tooter pointers, especially when a Tooter
-was destroyed.
-</p>
-Learning how to <a href="http://web.cs.ucla.edu/classes/fall23/cs31/sanitizer.html">interpret sanitizer
-messages</a> may well make the task of identifying where in your code
-something is going wrong easier.
-<p>
-Drawing a picture of what the <code>m_tooters</code> array looks like,
-carefully hand-simulate your <code>City::moveTooters</code> code to see
-what happens if a couple of Tooters are converted during a turn.  Do you
-leave the <code>m_tooters</code> array in a reasonable state with an
-appropriate <code>m_nTooters</code> value?
-</p>
-</li>
-<li>
-<p>
-<strong>
-How can I check for memory leaks?
-</strong>
-</p>
-<p>
-If you run your program under g31 and can play the game long enough to
-convert, say, ten tooters and then quit the game, that should cause enough
-allocations and deallocations so that if you have a memory leak because you
-mismanaged your pointers, you will be told about it with a long message
-starting <em>LeakSanitizer: detected memory leaks</em>
-</p>
-</li>
-<li>
-<p>
-<strong>
-I'm still confused about how City::addTooter tells the Tooter
-constructor what City the Tooter is being added to.
-</strong>
-</p>
-<p>
-<em>Apologies to <a href="https://www.youtube.com/watch?v=sShMA85pv8M" target="_blank">Abbott and Costello</a></em>:
-</p>
-<p>
-<em>Teacher:  </em>FAQ #2 answers this.<br>
-<em>Student:  </em>FAQ #2 answers it?<br>
-<em>Teacher:  </em>No, FAQ #2 answers this.<br>
-<em>Student:  </em>So what is the answer?<br>
-<em>Teacher:  </em>This is the answer.<br>
-<em>Student:  </em>What is?<br>
-<em>Teacher:  </em>No, I told you this is the answer.<br>
-<em>Student:  </em>What is?<br>
-<em>Teacher:  </em>What is not.<br>
-<em>Student:  </em>What is not what?<br>
-<em>Teacher:  </em>What is not the answer.<br>
-<em>Student:  </em>I don't care what is <em>not</em> the answer, I want to
-know what <em>is</em> the answer.<br>
-<em>Teacher:  </em>But it's not.<br>
-<em>Student:  </em>What's not?<br>
-<em>Teacher:  </em>Right.<br>
-<em>Student:  </em>Hunh?  What's right?<br>
-<em>Teacher:  </em>No, what's wrong.<br>
-<em>Student:  </em>What's wrong is that you're not telling me the answer.<br>
-<em>Teacher:  </em>But I did tell you the answer.<br>
-<em>Student:  </em>Oh, this is absurd!<br>
-<em>Teacher:  </em>This is not absurd.  This is what you wanted to know.<br>
-<em>Student:  </em>What is?<br>
-<em>Teacher:  </em>This is.<br>
-<em>Student:  </em>Look, you're not helping me by telling me that.<br>
-<em>Teacher:  </em>I'm not telling you that.<br>
-<em>Student:  </em>You're not telling me what?<br>
-<em>Teacher:  </em>Not that, either.<br>
-<em>Student:  </em>Not what?<br>
-<em>Teacher:  </em>Right.  I'm not telling you what.<br>
-<em>Student:  </em>I don't want to play guessing games.  Can't you just say
-something and tell me that's the answer?<br>
-<em>Teacher:  </em>It would be lying to tell you that's the answer.<br>
-<em>Student:  </em>It would be lying to tell me what's the answer?<br>
-<em>Teacher:  </em>Right.<br>
-<em>Student:  </em>Aw, the heck with it — I'll try and come up with
-this myself.<br>
-<em>Teacher:  </em>Now you've got it!<br>
-</p>
-</li>
-</ol>
 
 
-</body></html>
+</body></html
