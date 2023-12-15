@@ -1,0 +1,617 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0067)https://web.cs.ucla.edu/classes/fall23/cs31/Projects/7/testing.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+ <title>Project 7 Test Data</title>
+</head>
+<body>
+<h2>Project 7 Test Data</h2>
+<p>
+There were 29 test cases; cases 1 through 16 were worth 3 points each, and
+cases 17 though 29 were worth 4 points each.  Each test case is represented
+by an assertion that must be true for you to pass that test.  To run the test
+cases:
+</p>
+<ol>
+<li>Remove the main routine from your toot.cpp file.</li>
+<li>Append the following text to the end of your toot.cpp file, and build
+the resulting program.</li>
+<li>For any test case you wish to try, run the program, providing as input
+the test number.</li>
+</ol>
+<pre>#include &lt;iostream&gt;
+#include &lt;sstream&gt;
+#include &lt;streambuf&gt;
+#include &lt;string&gt;
+#include &lt;map&gt;
+#include &lt;algorithm&gt;
+#include &lt;thread&gt;
+#include &lt;future&gt;
+#include &lt;chrono&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cassert&gt;
+using namespace std;
+
+class StreambufSwitcher
+{
+  public:
+    StreambufSwitcher(ios&amp; dest, streambuf* sb,
+                    ios::iostate exceptions = ios::goodbit)
+     : dest_stream(dest), oldsb(dest.rdbuf(sb)), oldex(dest.exceptions())
+    { dest_stream.exceptions(exceptions); }
+    StreambufSwitcher(ios&amp; dest, ios&amp; src)
+     : StreambufSwitcher(dest, src.rdbuf(), src.exceptions())
+    {}
+    ~StreambufSwitcher()
+    { dest_stream.rdbuf(oldsb); dest_stream.exceptions(oldex); }
+  private:
+    ios&amp; dest_stream;
+    streambuf* oldsb;
+    ios::iostate oldex;
+};
+
+map&lt;void*, size_t&gt; allocMap;
+bool recordaddrs = false;
+
+inline bool isRecordedSize(size_t n)
+{
+    return n == sizeof(Tooter)  ||  n == sizeof(Player);
+}
+
+void* operator new(size_t n)
+{
+    void* p = malloc(n);
+    fill_n(static_cast&lt;char*&gt;(p), n, 0xca);
+    if (recordaddrs  &amp;&amp;  isRecordedSize(n))
+    {
+        recordaddrs = false;
+        allocMap.insert(make_pair(p, n));
+        recordaddrs = true;
+    }
+    return p;
+}
+
+void unrecordaddr(void* p)
+{
+    recordaddrs = false;
+    auto it = allocMap.find(p);
+    if (it != allocMap.end())
+    {
+        fill_n(static_cast&lt;char*&gt;(p), it-&gt;second, 0xcb);
+        allocMap.erase(it);
+    }
+    recordaddrs = true;
+}
+
+#if __cplusplus &gt;= 201402L  &amp;&amp;  ! defined(__clang__)
+// Unless clang is supplied the -fsized-deallocation flag, it will
+// not call the C++14/17 sized operator delete.
+
+void operator delete(void* p) noexcept
+{
+    free(p);
+}
+
+void operator delete(void* p, size_t n) noexcept
+{
+    if (recordaddrs  &amp;&amp;  isRecordedSize(n))
+        unrecordaddr(p);
+    operator delete(p);
+}
+#else
+void operator delete(void* p) noexcept
+{
+    if (recordaddrs)
+        unrecordaddr(p);
+    free(p);
+}
+#endif
+
+void testone(int n)
+{
+    StreambufSwitcher sso(cout, cerr);
+
+    switch (n)
+    {
+                     default: {
+        cout &lt;&lt; "Bad argument" &lt;&lt; endl;
+            } break; case  1: {
+        City c(10, 18);
+        c.addPlayer(2, 2);
+        Tooter t(&amp;c, 5, 17);
+        assert(t.row() == 5  &amp;&amp;  t.col() == 17);
+            } break; case  2: {
+        bool movedr = false;
+        bool movedl = false;
+        bool stayed = false;
+        for (int k = 0; k &lt; 150; k++)
+        {
+            City c(1, 30);
+            c.addPlayer(1, 1);
+            Tooter t(&amp;c, 1, 29);
+            assert(t.row() == 1  &amp;&amp;  t.col() == 29);
+            for (int n = 0; n &lt; 2; n++)
+            {
+                int oldc = t.col();
+                t.move();
+                assert(t.row() == 1  &amp;&amp;  t.col() &lt;= 30);
+                int d = t.col() - oldc;
+                switch (d)
+                {
+                  case  0:  stayed = true; break;
+                  case  1:  movedr = true; break;
+                  case -1:  movedl = true; break;
+                  default:  assert(false);
+                }
+            }
+        }
+        assert(movedr  &amp;&amp;  movedl  &amp;&amp;  stayed);
+            } break; case  3: {
+        bool movedd = false;
+        bool movedu = false;
+        bool stayed = false;
+        for (int k = 0; k &lt; 150; k++)
+        {
+            City c(20, 1);
+            c.addPlayer(1, 1);
+            Tooter t(&amp;c, 19, 1);
+            assert(t.row() == 19  &amp;&amp;  t.col() == 1);
+            for (int n = 0; n &lt; 2; n++)
+            {
+                int oldr = t.row();
+                t.move();
+                assert(t.col() == 1  &amp;&amp;  t.row() &lt;= 20);
+                int d = t.row() - oldr;
+                switch (d)
+                {
+                  case  0:  stayed = true; break;
+                  case  1:  movedd = true; break;
+                  case -1:  movedu = true; break;
+                  default:  assert(false);
+                }
+            }
+        }
+        assert(movedd  &amp;&amp;  movedu  &amp;&amp;  stayed);
+            } break; case  4: {
+        City c(20, 20);
+        c.addPlayer(1, 1);
+        Tooter t(&amp;c, 12, 12);
+        for (int k = 0; k &lt; 8; k++)
+        {
+            int oldr = t.row();
+            int oldc = t.col();
+            t.move();
+            assert((t.row() == oldr  &amp;&amp;  abs(t.col() - oldc) == 1)  ||
+                   (t.col() == oldc  &amp;&amp;  abs(t.row() - oldr) == 1));
+        }
+            } break; case  5: {
+        const int dr[NUMDIRS+1] = { -1,  0,  1,  0,  0 };
+        const int dc[NUMDIRS+1] = {  0,  1,  0, -1,  0 };
+        for (int k = 0; k &lt; NUMDIRS; k++)
+        {
+            int nvisits[NUMDIRS+1] = { 0 };
+            for (int n = 0; n &lt; 100; n++)
+            {
+                City c(20, 20);
+                c.addPlayer(10, 10);
+                int oldr = 10 - dr[k];
+                int oldc = 10 - dc[k];
+                Tooter t(&amp;c, oldr, oldc);
+                t.move();
+                int rdiff = t.row() - oldr;
+                int cdiff = t.col() - oldc;
+                int i;
+                for (i = 0; i &lt; NUMDIRS+1; i++)
+                {
+                    if (rdiff == dr[i]  &amp;&amp;  cdiff == dc[i])
+                    {
+                        nvisits[i]++;
+                        break;
+                    }
+                }
+                assert(i &lt; NUMDIRS+1);
+            }
+            for (int i = 0; i &lt; NUMDIRS+1; i++)
+                assert(k == i ? nvisits[i] == 0 : nvisits[i] &gt; 1);
+        }
+            } break; case  6: {
+        City c(10, 20);
+        Player p(&amp;c, 2, 3);
+        assert(p.row() == 2  &amp;&amp;  p.col() == 3  &amp;&amp;  !p.isPassedOut());
+            } break; case  7: {
+        City c(10, 20);
+        Player p(&amp;c, 2, 3);
+        for (int k = 0; k &lt; 12; k++)
+        {
+            assert(!p.isPassedOut());
+            p.getGassed();
+        }
+        assert(p.isPassedOut());
+            } break; case  8: {
+        City c(10, 20);
+        Player p(&amp;c, 2, 3);
+        for (int k = 0; k &lt; 12; k++)
+        {
+            assert(p.health() == 12 - k);
+            p.getGassed();
+        }
+        assert(p.isPassedOut());
+            } break; case  9: {
+        City c(10, 18);
+        c.addPlayer(10, 17);
+        Player* pp = c.player();
+        pp-&gt;move(RIGHT);
+        assert(pp-&gt;row() == 10  &amp;&amp;  pp-&gt;col() == 18  &amp;&amp;  !pp-&gt;isPassedOut());
+        pp-&gt;move(DOWN);
+        assert(pp-&gt;row() == 10  &amp;&amp;  pp-&gt;col() == 18  &amp;&amp;  !pp-&gt;isPassedOut());
+        pp-&gt;move(RIGHT);
+        assert(pp-&gt;row() == 10  &amp;&amp;  pp-&gt;col() == 18  &amp;&amp;  !pp-&gt;isPassedOut());
+            } break; case 10: {
+        City c(10, 18);
+        c.addPlayer(2, 1);
+        Player* pp = c.player();
+        pp-&gt;move(UP);
+        assert(pp-&gt;row() == 1  &amp;&amp;  pp-&gt;col() == 1  &amp;&amp;  !pp-&gt;isPassedOut());
+        pp-&gt;move(LEFT);
+        assert(pp-&gt;row() == 1  &amp;&amp;  pp-&gt;col() == 1  &amp;&amp;  !pp-&gt;isPassedOut());
+        pp-&gt;move(UP);
+        assert(pp-&gt;row() == 1  &amp;&amp;  pp-&gt;col() == 1  &amp;&amp;  !pp-&gt;isPassedOut());
+            } break; case 11: {
+        City c(10, 20);
+        c.addPlayer(8, 12);
+        Player* pp = c.player();
+        pp-&gt;move(UP);
+        assert(pp-&gt;row() == 7  &amp;&amp;  pp-&gt;col() == 12);
+        pp-&gt;move(DOWN);
+        assert(pp-&gt;row() == 8  &amp;&amp;  pp-&gt;col() == 12);
+        pp-&gt;move(LEFT);
+        assert(pp-&gt;row() == 8  &amp;&amp;  pp-&gt;col() == 11);
+        pp-&gt;move(RIGHT);
+        assert(pp-&gt;row() == 8  &amp;&amp;  pp-&gt;col() == 12);
+            } break; case 12: {
+        City c(10, 18);
+        c.addPlayer(5, 7);
+        c.addTooter(3, 7);
+        c.addTooter(4, 9);
+        c.addTooter(6, 8);
+        c.addTooter(5, 6);
+        Player* pp = c.player();
+        pp-&gt;move(UP);
+        assert(pp-&gt;row() == 4  &amp;&amp;  pp-&gt;col() == 7  &amp;&amp;  !pp-&gt;isPassedOut());
+        pp-&gt;move(UP);
+        assert(pp-&gt;row() == 4  &amp;&amp;  pp-&gt;col() == 7  &amp;&amp;  !pp-&gt;isPassedOut());
+        pp-&gt;move(RIGHT);
+        assert(pp-&gt;row() == 4  &amp;&amp;  pp-&gt;col() == 8  &amp;&amp;  !pp-&gt;isPassedOut());
+        pp-&gt;move(RIGHT);
+        assert(pp-&gt;row() == 4  &amp;&amp;  pp-&gt;col() == 8  &amp;&amp;  !pp-&gt;isPassedOut());
+        pp-&gt;move(DOWN);
+        assert(pp-&gt;row() == 5  &amp;&amp;  pp-&gt;col() == 8  &amp;&amp;  !pp-&gt;isPassedOut());
+        pp-&gt;move(DOWN);
+        assert(pp-&gt;row() == 5  &amp;&amp;  pp-&gt;col() == 8  &amp;&amp;  !pp-&gt;isPassedOut());
+        pp-&gt;move(LEFT);
+        assert(pp-&gt;row() == 5  &amp;&amp;  pp-&gt;col() == 7  &amp;&amp;  !pp-&gt;isPassedOut());
+        pp-&gt;move(LEFT);
+        assert(pp-&gt;row() == 5  &amp;&amp;  pp-&gt;col() == 7  &amp;&amp;  !pp-&gt;isPassedOut());
+            } break; case 13: {
+        City c(10, 18);
+        c.addPlayer(3, 9);
+        c.addTooter(4, 9);
+        assert(c.tooterCount() == 1);
+        for (int k = 0; k &lt; 100  &amp;&amp;  c.tooterCount() == 1; k++)
+            c.player()-&gt;preach();
+        assert(c.tooterCount() == 0);
+            } break; case 14: {
+        City c(10, 18);
+        c.addPlayer(3, 9);
+        assert(c.tooterCount() == 0);
+        for (int k = 1; k &lt;= 20; k++)
+        {
+            c.addTooter(3, 8);
+            c.addTooter(3, 10);
+            assert(c.tooterCount() == 2 * k);
+        }
+        int prevct = c.tooterCount();
+        for (int k = 0; k &lt; 100  &amp;&amp;  prevct &gt; 0; k++)
+        {
+            c.player()-&gt;preach();
+            int ct = c.tooterCount();
+            assert(ct &lt;= prevct);
+            prevct = ct;
+        }
+        assert(prevct == 0);
+            } break; case 15: {
+        City c(10, 18);
+        c.addPlayer(3, 9);
+        c.addTooter(2, 9);
+        assert(c.nTootersAt(2, 9) == 1);
+        for (int k = 0; k &lt; 100  &amp;&amp;  c.nTootersAt(2, 9) == 1; k++)
+            c.player()-&gt;preach();
+        assert(c.nTootersAt(2, 9) == 0);
+            } break; case 16: {
+        City c(2, 3);
+        c.addPlayer(1, 2);
+        c.addTooter(1, 3);
+        c.addTooter(2, 2);
+        ostringstream oss;
+        streambuf *sb = cout.rdbuf(oss.rdbuf());
+        c.display();
+        cout.rdbuf(sb);
+        string s = oss.str();
+        assert(s.find(".@T") != string::npos  &amp;&amp;  s.find(".T.") != string::npos);
+            } break; case 17: {
+        City c(2, 3);
+        c.addPlayer(1, 2);
+        for (int k = 1; k &lt;= 8; k++)
+            c.addTooter(1, 3);
+        c.addTooter(2, 2);
+        ostringstream oss;
+        streambuf *sb = cout.rdbuf(oss.rdbuf());
+        c.display();
+        cout.rdbuf(sb);
+        string s = oss.str();
+        assert(s.find(".@8") != string::npos);
+            } break; case 18: {
+        City c(2, 3);
+        c.addPlayer(1, 2);
+        for (int k = 1; k &lt;= 10; k++)
+            c.addTooter(1, 3);
+        c.addTooter(2, 2);
+        ostringstream oss;
+        streambuf *sb = cout.rdbuf(oss.rdbuf());
+        c.display();
+        cout.rdbuf(sb);
+        string s = oss.str();
+        assert(s.find(".@9") != string::npos);
+            } break; case 19: {
+        City c(10, 18);
+        c.addPlayer(3, 9);
+        int prevct[3];
+        for (int dr = -1; dr &lt;= 1; dr++)
+        {
+            if (dr == 0)
+                continue;
+            for (int k = 0; k &lt; MAXTOOTERS/2; k++)
+                assert(c.addTooter(3+dr, 9));
+            prevct[1+dr] = c.nTootersAt(3+dr, 9);
+            assert(prevct[1+dr] == MAXTOOTERS/2);
+        }
+        bool anyleft = true;
+        for (int k = 0; k &lt; 100  &amp;&amp;  anyleft; k++)
+        {
+            anyleft = false;
+            c.preachToTootersAroundPlayer();
+            for (int dr = -1; dr &lt;= 1; dr++)
+            {
+                if (dr == 0)
+                    continue;
+                int ct = c.nTootersAt(3+dr, 9);
+                assert(ct &lt;= prevct[1+dr]);
+                prevct[1+dr] = ct;
+                if (ct &gt; 0)
+                    anyleft = true;
+            }
+        }
+        assert(!anyleft);
+            } break; case 20: {
+        City c(10, 18);
+        c.addPlayer(3, 9);
+        int prevct[3][3];
+        for (int dr = -1; dr &lt;= 1; dr++)
+          for (int dc = -1; dc &lt;= 1; dc++)
+          {
+            if (dr == 0  &amp;&amp;  dc == 0)
+                continue;
+            for (int k = 0; k &lt; MAXTOOTERS/8; k++)
+                assert(c.addTooter(3+dr, 9+dc));
+            prevct[1+dr][1+dc] = c.nTootersAt(3+dr, 9+dc);
+            assert(prevct[1+dr][1+dc] == MAXTOOTERS/8);
+          }
+        bool anyleft = true;
+        for (int k = 0; k &lt; 100  &amp;&amp;  anyleft; k++)
+        {
+            anyleft = false;
+            c.preachToTootersAroundPlayer();
+            for (int dr = -1; dr &lt;= 1; dr++)
+              for (int dc = -1; dc &lt;= 1; dc++)
+              {
+                if (dr == 0  &amp;&amp;  dc == 0)
+                    continue;
+                int ct = c.nTootersAt(3+dr, 9+dc);
+                assert(ct &lt;= prevct[1+dr][1+dc]);
+                prevct[1+dr][1+dc] = ct;
+                if (ct &gt; 0)
+                    anyleft = true;
+              }
+        }
+        assert(!anyleft);
+            } break; case 21: {
+        int n = 0;
+        for (int k = 0; k &lt; 600; k++)
+        {
+            City c(10, 18);
+            c.addPlayer(3, 9);
+            assert(c.tooterCount() == 0);
+            c.addTooter(3, 10);
+            assert(c.tooterCount() == 1);
+            c.preachToTootersAroundPlayer();
+            if (c.tooterCount() == 0)
+                n++;
+        }
+        assert(n &gt;= 355 &amp;&amp;  n &lt;= 445);
+            } break; case 22: {
+        City c(10, 18);
+        c.addPlayer(3, 9);
+        for (int k = 0; k &lt; MAXTOOTERS; k++)
+            assert(c.addTooter(2, 9));
+        assert(!c.addTooter(2, 9));
+        assert(c.tooterCount() == MAXTOOTERS);
+        for (int n = 64; n &gt; 0; n /= 2)
+        {
+            for (int k = 0; k &lt; 100  &amp;&amp;  c.tooterCount() &gt;= n; k++)
+                c.preachToTootersAroundPlayer();
+            assert(c.tooterCount() &lt; n);
+            for (int k = 0; k &lt; MAXTOOTERS  &amp;&amp;  c.tooterCount() &lt; MAXTOOTERS; k++)
+                assert(c.addTooter(2, 9));
+            assert(c.tooterCount() == MAXTOOTERS);
+        }
+            } break; case 23: {
+        const int dr[NUMDIRS] = { -1,  0,  1,  0 };
+        const int dc[NUMDIRS] = {  0,  1,  0, -1 };
+        City c(12, 18);
+        c.addPlayer(1, 1);
+        const int r[3] = { 3, 6, 9 };
+        const int v[3] = { 4, 7, 10 };
+        for (int k = 0; k &lt; 3; k++)
+            c.addTooter(r[k], v[k]);
+        c.moveTooters();
+        for (int k = 0; k &lt; 3; k++)
+        {
+            int ct[2] = { 0 };
+            for (int n = 0; n &lt; NUMDIRS; n++)
+            {
+                int m = c.nTootersAt(r[k]+dr[n], v[k]+dc[n]);
+                assert(m == 0  ||  m == 1);
+                ct[m]++;
+            }
+            assert(ct[0] == 3  &amp;&amp;  ct[1] == 1);
+        }
+            } break; case 24: {
+        bool gassed = false;
+        for (int n = 0; n &lt; 20; n++)
+        {
+            City c(10, 20);
+            c.addPlayer(5, 9);
+            for (int k = 0; k &lt; 11; k++)
+                c.addTooter(5, 11);
+            c.preachToTootersAroundPlayer();
+            c.moveTooters();
+            int h = c.player()-&gt;health();
+            if (h &lt; 12)
+                gassed = true;
+            assert(c.nTootersAt(5, 10) == 12 - h);
+        }
+        assert(gassed);
+            } break; case 25: {
+        bool gassed = false;
+        for (int n = 0; n &lt; 20; n++)
+        {
+            City c(10, 20);
+            c.addPlayer(5, 9);
+            for (int k = 0; k &lt; 9; k++)
+                c.addTooter(5, 10);
+            assert(c.player()-&gt;health() == 12);
+            c.moveTooters();
+            int h = c.player()-&gt;health();
+            if (h &lt; 12)
+                gassed = true;
+            assert(c.nTootersAt(5, 10) == 12 - h);
+        }
+        assert(gassed);
+            } break; case 26: {
+        for (int n = 0; n &lt; 20; n++)
+        {
+            City c(1, 20);
+            c.addPlayer(1, 2);
+            for (int k = 0; k &lt; 11; k++)
+                c.addTooter(1, 1);
+            assert(c.player()-&gt;health() == 12);
+            c.moveTooters();
+            assert(c.player()-&gt;health() == 12-11);
+            assert(c.nTootersAt(1, 1) == 11);
+        }
+            } break; case 27: {
+        int n;
+        for (n = 0; n &lt; 2; n++)
+        {
+            City c(10, 20);
+            c.addPlayer(5, 9);
+            for (int k = 0; k &lt; MAXTOOTERS; k++)
+                c.addTooter(5, 11);
+            assert(c.player()-&gt;health() == 12  &amp;&amp;  ! c.player()-&gt;isPassedOut());
+            c.moveTooters();
+            if (c.player()-&gt;health() &lt;= 0  &amp;&amp;  c.player()-&gt;isPassedOut())
+                break;
+        }
+        assert(n != 2);
+            } break; case 28: {
+        recordaddrs = true;
+        int oldn = allocMap.size();
+        {
+            City c(10, 20);
+            int oldn2 = allocMap.size();
+            assert(oldn2 &gt;= oldn);
+            c.addPlayer(4, 3);
+            c.addTooter(5, 6);
+            c.addTooter(5, 7);
+            c.addTooter(5, 8);
+            assert(allocMap.size() == oldn2 + 4);
+        }
+        assert(allocMap.size() == oldn);
+        recordaddrs = false;
+            } break; case 29: {
+        recordaddrs = true;
+        int oldn = allocMap.size();
+        {
+            City c(10, 20);
+            int oldn2 = allocMap.size();
+            assert(oldn2 &gt;= oldn);
+            c.addPlayer(4, 3);
+            assert(allocMap.size() == oldn2 + 1);
+            for (int k = 0; k &lt; MAXTOOTERS; k++)
+                c.addTooter(4, 4);
+            assert(allocMap.size() == oldn2 + 1 + MAXTOOTERS);
+            for (int k = 0; k &lt; 100  &amp;&amp;  c.nTootersAt(4, 4) &gt; 0; k++)
+            {
+                c.preachToTootersAroundPlayer();
+                assert(allocMap.size() == oldn2 + 1 + c.nTootersAt(4, 4));
+            }
+            assert(c.nTootersAt(4, 4) == 0);
+        }
+        assert(allocMap.size() == oldn);
+        recordaddrs = false;
+            } break;
+    }
+}
+
+int main()
+{
+    cout &lt;&lt; "Enter test number (1-29): ";
+    int n;
+    cin &gt;&gt; n;
+    testone(n);
+    cout &lt;&lt; "Passed!" &lt;&lt; endl;
+}
+</pre>
+
+
+</body><style>
+@media print {
+  #simplifyJobsContainer {
+    display: none;
+  }
+}
+</style><div id="simplifyJobsContainer" style="position: absolute; top: 0px; left: 0px; width: 0px; height: 0px; overflow: visible; z-index: 2147483647;"><span><template shadowrootmode="open"><link rel="stylesheet" href="chrome-extension://pbanhockgagggenencehbnadejlgchfc/css/styles.css"><style>
+  :host {
+    all: initial;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    font-family: Palanquin, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(203, 213, 225, 1) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 6px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: rgba(203, 213, 225, 1);
+    border-radius: 3px;
+    border: 0;
+  }
+</style><div id="simplifyJobsPortals"></div></template></span></div><script id="simplifyJobsPageScript" src="chrome-extension://pbanhockgagggenencehbnadejlgchfc/js/pageScript.bundle.js"></script></html>
